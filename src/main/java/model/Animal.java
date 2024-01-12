@@ -8,9 +8,9 @@ public class Animal implements WorldElement {
         this.direction = MapDirection.NORTH;
         this.position = new Vector2d(2, 2);
     }
-    public Animal(Vector2d position) {
+    public Animal(Vector2d position, MapDirection direction) {
         this.position = position;
-        this.direction = MapDirection.NORTH;
+        this.direction = direction;
     }
 
     @Override
@@ -29,6 +29,10 @@ public class Animal implements WorldElement {
 
     public Vector2d getPosition() {
         return position;
+    }
+
+    public MapDirection getOrient() {
+        return direction;
     }
 
     public void move(MoveDirection direction, MoveValidator validator) {
