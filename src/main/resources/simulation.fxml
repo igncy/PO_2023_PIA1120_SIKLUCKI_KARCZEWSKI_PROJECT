@@ -10,7 +10,7 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             minHeight="550.0" minWidth="850.0"
-            fx:controller="SimulationPresenter">
+            fx:controller="SimulationController">
     <center>
         <VBox alignment="CENTER">
             <Label fx:id="infoLabel" text="All animals will be living here!"  textAlignment="CENTER"/>
