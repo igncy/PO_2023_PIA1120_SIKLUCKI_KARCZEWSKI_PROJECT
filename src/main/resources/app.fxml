@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Button?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            minHeight="600.0" minWidth="500.0"
+            fx:controller="simulation.AppController">
+    <center>
+        <VBox alignment="CENTER">
+            <Label text="test"  textAlignment="CENTER"/>
+            <HBox alignment="CENTER">
+                <Label text="Initial animal count "/>
+                <TextField fx:id="animalCountField" maxWidth="50"/>
+            </HBox>
+            <HBox alignment="CENTER">
+                <Label text="Initial grass count "/>
+                <TextField fx:id="grassCountField" maxWidth="50"/>
+            </HBox>
+            <Button text="Run simulation" onAction="#runSimulation" alignment="BOTTOM_CENTER"/>
+        </VBox>
+    </center>
+</BorderPane>
