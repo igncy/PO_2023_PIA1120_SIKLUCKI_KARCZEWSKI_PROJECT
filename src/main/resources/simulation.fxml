@@ -6,11 +6,10 @@
 <?import javafx.scene.layout.GridPane?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            minHeight="800.0" minWidth="800.0"
-            fx:controller="simulation.SimulationController">
+            minHeight="700.0" minWidth="800.0">
     <center>
         <VBox alignment="CENTER">
-            <Label fx:id="infoLabel" text="test"  textAlignment="CENTER"/>
+            <Label fx:id="infoLabel" text="test" textAlignment="CENTER"/>
             <Label fx:id="moveInfo"/>
             <GridPane fx:id="mapGrid" gridLinesVisible="true" alignment="CENTER"/>
         </VBox>
