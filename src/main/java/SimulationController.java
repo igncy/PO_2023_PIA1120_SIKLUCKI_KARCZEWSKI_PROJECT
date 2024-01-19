@@ -1,5 +1,5 @@
-import Simulation;
-import SimulationEngine;
+//import Simulation;
+//import SimulationEngine;
 import model.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -13,7 +13,7 @@ import javafx.scene.layout.RowConstraints;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimulationController implements MapChangeListener {
+public class SimulationController {// implements MapChangeListener {
     private WorldMap map;
     @FXML private Label infoLabel;
     @FXML private TextField textField;
