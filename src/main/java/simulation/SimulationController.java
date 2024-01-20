@@ -11,6 +11,8 @@ public class SimulationController {
     @FXML private Label infoLabel;
     @FXML private GridPane mapGrid;
     @FXML private Label moveInfo;
+
+//    private WorldMap map;
     private int updateCount = 1;
 
     public void drawMap(String message) {
@@ -54,4 +56,15 @@ public class SimulationController {
         mapGrid.add(label, x, y);
         GridPane.setHalignment(label, HPos.CENTER);
     }
+
+    //    public void setWorldMap(WorldMap map) {
+//        this.map = map;
+//    }
+
+//    @Override
+//    public void mapChanged(WorldMap worldMap, String message) {
+//        Platform.runLater(() -> {
+//            drawMap(message);
+//        });
+//    }
 }

@@ -28,7 +28,7 @@ public class SimulationEngine {
     }
 
     public void runAsyncInThreadPool() {
-        ExecutorService executorService = Executors.newFixedThreadPool(4);
+//        ExecutorService executorService = Executors.newFixedThreadPool(4);
         for (Simulation simulation: simulations)
             executorService.submit(simulation);
         executorService.shutdown();

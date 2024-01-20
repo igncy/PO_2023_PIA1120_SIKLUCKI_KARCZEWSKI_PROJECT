@@ -1,78 +1,160 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.collections.FXCollections?>
-<?import java.lang.String?>
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            minHeight="650.0" minWidth="450.0"
-            fx:controller="simulation.AppController">
-    <center>
-        <VBox alignment="CENTER">
-            <Label text="test"  textAlignment="CENTER"/>
+<?import java.lang.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-            <HBox alignment="CENTER">
-                <Label text="Initial animal count "/>
-                <TextField fx:id="animalCountField" maxWidth="50"/>
-            </HBox>
+<BorderPane minHeight="700.0" minWidth="350.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="simulation.AppController">
+<center>
+<VBox alignment="CENTER">
+    <Label text="Darwin World" style="-fx-font-weight: bold"/>
 
-            <HBox alignment="CENTER">
-                <Label text="Initial grass count "/>
-                <TextField fx:id="grassCountField" maxWidth="50"/>
-            </HBox>
+    <Label/>
+    <Label text="World properties" style="-fx-font-weight: bold"/>
 
-            <HBox alignment="CENTER">
-                <Label text="genome mutation types "/>
-                <ComboBox fx:id="mutationSelect">
-                    <items>
-                        <FXCollections fx:factory="observableArrayList">
-                            <String fx:value="pełna losowość"/>
-                            <String fx:value="lekka korekta"/>
-                        </FXCollections>
-                    </items>
-                    <value>
-                        <String fx:value="pełna losowość"/>
-                    </value>
-                </ComboBox>
-            </HBox>
+    <HBox alignment="CENTER">
+        <Label text="Map width "/>
+        <TextField fx:id="mapWidthField" maxWidth="50" promptText="500"/>
+    </HBox>
 
-            <HBox alignment="CENTER">
-                <Label text="grass types "/>
-                <ComboBox fx:id="grassSelect">
-                    <items>
-                        <FXCollections fx:factory="observableArrayList">
-                            <String fx:value="zalesione równiki"/>
-                            <String fx:value="życiodajne truchła "/>
-                        </FXCollections>
-                    </items>
-                    <value>
-                        <String fx:value="zalesione równiki"/>
-                    </value>
-                </ComboBox>
-            </HBox>
+    <HBox alignment="CENTER">
+        <Label text="Map height "/>
+        <TextField fx:id="mapHeightField" maxWidth="50" promptText="500"/>
+    </HBox>
 
-            <HBox alignment="CENTER">
-                <Label text="saved config presets "/>
-                <ComboBox fx:id="configSelect">
-                    <items>
-                        <FXCollections fx:factory="observableArrayList">
-                            <String fx:value="default"/>
-                            <String fx:value="config 2"/>
-                        </FXCollections>
-                    </items>
-                    <value>
-                        <String fx:value="default"/>
-                    </value>
-                </ComboBox>
-            </HBox>
+    <HBox alignment="CENTER">
+        <Label text="Initial grass count "/>
+        <TextField fx:id="grassCountField" maxWidth="50" promptText="20"/>
+    </HBox>
 
-            <Button text="Run simulation" onAction="#runSimulation"/>
-        </VBox>
-    </center>
+    <HBox alignment="CENTER">
+        <Label text="Grass energy bonus "/>
+        <TextField fx:id="grassEnergyField" maxWidth="50" promptText="20"/>
+    </HBox>
+
+    <HBox alignment="CENTER">
+        <Label text="New grass growth per day "/>
+        <TextField fx:id="grassGrowthField" maxWidth="50" promptText="20"/>
+    </HBox>
+
+    <HBox alignment="CENTER">
+        <Label text="Grass type "/>
+        <ComboBox fx:id="grassSelect">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="zalesione równiki"/>
+                    <String fx:value="życiodajne truchła "/>
+                </FXCollections>
+            </items>
+            <value>
+                <String fx:value="zalesione równiki"/>
+            </value>
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </ComboBox>
+    </HBox>
+
+
+
+    <Label/>
+    <Label text="Animal properties" style="-fx-font-weight: bold"/>
+
+    <HBox alignment="CENTER">
+        <Label text="Initial animal count "/>
+        <TextField fx:id="animalCountField" maxWidth="50"/>
+    </HBox>
+
+    <HBox alignment="CENTER">
+        <Label text="Initial animal energy "/>
+        <TextField fx:id="animalEnergyField" maxWidth="50" promptText="20"/>
+    </HBox>
+
+    <HBox alignment="CENTER">
+        <Label text="Minimum energy for satiety "/>
+        <TextField fx:id="animalSatietyField" maxWidth="50" promptText="20"/>
+    </HBox>
+
+    <HBox alignment="CENTER">
+        <Label text="Energy required for breeding "/>
+        <TextField fx:id="animalBreedingEnergyField" maxWidth="50" promptText="20"/>
+    </HBox>
+
+    <HBox alignment="CENTER">
+        <Label text="Minimum mutation number "/>
+        <TextField fx:id="mutationMinField" maxWidth="50" promptText="20"/>
+    </HBox>
+
+    <HBox alignment="CENTER">
+        <Label text="Maximum mutation number "/>
+        <TextField fx:id="mutationMaxField" maxWidth="50" promptText="20"/>
+    </HBox>
+
+    <HBox alignment="CENTER">
+        <Label text="Mutation type "/>
+        <ComboBox fx:id="mutationSelect">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="pełna losowość"/>
+                    <String fx:value="lekka korekta"/>
+                </FXCollections>
+            </items>
+            <value>
+                <String fx:value="pełna losowość"/>
+            </value>
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </ComboBox>
+    </HBox>
+
+    <HBox alignment="CENTER">
+        <Label text="Genome length "/>
+        <TextField fx:id="genomeLengthField" maxWidth="50" promptText="20"/>
+    </HBox>
+
+
+
+    <Label/>
+    <Label text="Configuration" style="-fx-font-weight: bold"/>
+
+    <HBox alignment="CENTER">
+        <Label text="Load preset "/>
+        <ComboBox fx:id="configSelect">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="none"/>
+                    <String fx:value="config 1"/>
+                    <String fx:value="config 2"/>
+                </FXCollections>
+            </items>
+            <value>
+                <String fx:value="none"/>
+            </value>
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </ComboBox>
+    </HBox>
+
+    <HBox alignment="CENTER">
+        <Label text="Save current "/>
+        <TextField fx:id="configName" maxWidth="100" promptText="name"/>
+        <Button onAction="#saveConfig" text="save">
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </Button>
+    </HBox>
+
+    <Label/>
+    <Button onAction="#runSimulation" text="Run simulation">
+        <cursor>
+            <Cursor fx:constant="HAND"/>
+        </cursor>
+    </Button>
+</VBox>
+</center>
 </BorderPane>
