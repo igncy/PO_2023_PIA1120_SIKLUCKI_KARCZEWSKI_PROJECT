@@ -5,156 +5,169 @@
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
+<?import javafx.geometry.Insets?>
 <BorderPane minHeight="700.0" minWidth="350.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="simulation.AppController">
+<top>
+    <VBox alignment="CENTER">
+        <Label text="Darwin World" style="-fx-font-weight: bold"/>
+        <padding>
+            <Insets top="15"/>
+        </padding>
+    </VBox>
+</top>
 <center>
-<VBox alignment="CENTER">
-    <Label text="Darwin World" style="-fx-font-weight: bold"/>
+    <VBox alignment="CENTER">
+        <Label text="World properties" style="-fx-font-weight: bold"/>
 
-    <Label/>
-    <Label text="World properties" style="-fx-font-weight: bold"/>
+        <HBox alignment="CENTER">
+            <Label text="Map width "/>
+            <TextField fx:id="mapWidthField" maxWidth="50" promptText="500"/>
+        </HBox>
 
-    <HBox alignment="CENTER">
-        <Label text="Map width "/>
-        <TextField fx:id="mapWidthField" maxWidth="50" promptText="500"/>
-    </HBox>
+        <HBox alignment="CENTER">
+            <Label text="Map height "/>
+            <TextField fx:id="mapHeightField" maxWidth="50" promptText="500"/>
+        </HBox>
 
-    <HBox alignment="CENTER">
-        <Label text="Map height "/>
-        <TextField fx:id="mapHeightField" maxWidth="50" promptText="500"/>
-    </HBox>
+        <HBox alignment="CENTER">
+            <Label text="Initial grass count "/>
+            <TextField fx:id="grassCountField" maxWidth="50" promptText="20"/>
+        </HBox>
 
-    <HBox alignment="CENTER">
-        <Label text="Initial grass count "/>
-        <TextField fx:id="grassCountField" maxWidth="50" promptText="20"/>
-    </HBox>
+        <HBox alignment="CENTER">
+            <Label text="Grass energy bonus "/>
+            <TextField fx:id="grassEnergyField" maxWidth="50" promptText="20"/>
+        </HBox>
 
-    <HBox alignment="CENTER">
-        <Label text="Grass energy bonus "/>
-        <TextField fx:id="grassEnergyField" maxWidth="50" promptText="20"/>
-    </HBox>
+        <HBox alignment="CENTER">
+            <Label text="New grass growth per day "/>
+            <TextField fx:id="grassGrowthField" maxWidth="50" promptText="20"/>
+        </HBox>
 
-    <HBox alignment="CENTER">
-        <Label text="New grass growth per day "/>
-        <TextField fx:id="grassGrowthField" maxWidth="50" promptText="20"/>
-    </HBox>
-
-    <HBox alignment="CENTER">
-        <Label text="Grass type "/>
-        <ComboBox fx:id="grassSelect">
-            <items>
-                <FXCollections fx:factory="observableArrayList">
-                    <String fx:value="zalesione równiki"/>
-                    <String fx:value="życiodajne truchła "/>
-                </FXCollections>
-            </items>
-            <value>
-                <String fx:value="zalesione równiki"/>
-            </value>
-            <cursor>
-                <Cursor fx:constant="HAND"/>
-            </cursor>
-        </ComboBox>
-    </HBox>
+        <HBox alignment="CENTER">
+            <Label text="Grass type "/>
+            <ComboBox fx:id="grassSelect">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="equatorial forests"/>
+                        <String fx:value="invigorating corpses"/>
+                    </FXCollections>
+                </items>
+                <value>
+                    <String fx:value="equatorial forests"/>
+                </value>
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
+            </ComboBox>
+        </HBox>
 
 
 
-    <Label/>
-    <Label text="Animal properties" style="-fx-font-weight: bold"/>
+        <Label/>
+        <Label text="Animal properties" style="-fx-font-weight: bold"/>
 
-    <HBox alignment="CENTER">
-        <Label text="Initial animal count "/>
-        <TextField fx:id="animalCountField" maxWidth="50"/>
-    </HBox>
+        <HBox alignment="CENTER">
+            <Label text="Initial animal count "/>
+            <TextField fx:id="animalCountField" maxWidth="50" promptText="20"/>
+        </HBox>
 
-    <HBox alignment="CENTER">
-        <Label text="Initial animal energy "/>
-        <TextField fx:id="animalEnergyField" maxWidth="50" promptText="20"/>
-    </HBox>
+        <HBox alignment="CENTER">
+            <Label text="Initial animal energy "/>
+            <TextField fx:id="animalEnergyField" maxWidth="50" promptText="20"/>
+        </HBox>
 
-    <HBox alignment="CENTER">
-        <Label text="Minimum energy for satiety "/>
-        <TextField fx:id="animalSatietyField" maxWidth="50" promptText="20"/>
-    </HBox>
+        <HBox alignment="CENTER">
+            <Label text="Minimum energy for satiety "/>
+            <TextField fx:id="animalSatietyField" maxWidth="50" promptText="20"/>
+        </HBox>
 
-    <HBox alignment="CENTER">
-        <Label text="Energy required for breeding "/>
-        <TextField fx:id="animalBreedingEnergyField" maxWidth="50" promptText="20"/>
-    </HBox>
+        <HBox alignment="CENTER">
+            <Label text="Energy required for breeding "/>
+            <TextField fx:id="animalBreedingEnergyField" maxWidth="50" promptText="20"/>
+        </HBox>
 
-    <HBox alignment="CENTER">
-        <Label text="Minimum mutation number "/>
-        <TextField fx:id="mutationMinField" maxWidth="50" promptText="20"/>
-    </HBox>
+        <HBox alignment="CENTER">
+            <Label text="Minimum mutations "/>
+            <TextField fx:id="mutationMinField" maxWidth="50" promptText="20"/>
+        </HBox>
 
-    <HBox alignment="CENTER">
-        <Label text="Maximum mutation number "/>
-        <TextField fx:id="mutationMaxField" maxWidth="50" promptText="20"/>
-    </HBox>
+        <HBox alignment="CENTER">
+            <Label text="Maximum mutations "/>
+            <TextField fx:id="mutationMaxField" maxWidth="50" promptText="20"/>
+        </HBox>
 
-    <HBox alignment="CENTER">
-        <Label text="Mutation type "/>
-        <ComboBox fx:id="mutationSelect">
-            <items>
-                <FXCollections fx:factory="observableArrayList">
-                    <String fx:value="pełna losowość"/>
-                    <String fx:value="lekka korekta"/>
-                </FXCollections>
-            </items>
-            <value>
-                <String fx:value="pełna losowość"/>
-            </value>
-            <cursor>
-                <Cursor fx:constant="HAND"/>
-            </cursor>
-        </ComboBox>
-    </HBox>
+        <HBox alignment="CENTER">
+            <Label text="Mutation type "/>
+            <ComboBox fx:id="mutationSelect">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="complete randomness"/>
+                        <String fx:value="slight adjustment"/>
+                    </FXCollections>
+                </items>
+                <value>
+                    <String fx:value="complete randomness"/>
+                </value>
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
+            </ComboBox>
+        </HBox>
 
-    <HBox alignment="CENTER">
-        <Label text="Genome length "/>
-        <TextField fx:id="genomeLengthField" maxWidth="50" promptText="20"/>
-    </HBox>
+        <HBox alignment="CENTER">
+            <Label text="Genome length "/>
+            <TextField fx:id="genomeLengthField" maxWidth="50" promptText="20"/>
+        </HBox>
 
 
 
-    <Label/>
-    <Label text="Configuration" style="-fx-font-weight: bold"/>
+        <Label/>
+        <Label text="Configuration" style="-fx-font-weight: bold"/>
 
-    <HBox alignment="CENTER">
-        <Label text="Load preset "/>
-        <ComboBox fx:id="configSelect">
-            <items>
-                <FXCollections fx:factory="observableArrayList">
+        <HBox alignment="CENTER">
+            <Label text="Load preset "/>
+            <ComboBox fx:id="configSelect">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="none"/>
+                        <String fx:value="config 1"/>
+                        <String fx:value="config 2"/>
+                    </FXCollections>
+                </items>
+                <value>
                     <String fx:value="none"/>
-                    <String fx:value="config 1"/>
-                    <String fx:value="config 2"/>
-                </FXCollections>
-            </items>
-            <value>
-                <String fx:value="none"/>
-            </value>
-            <cursor>
-                <Cursor fx:constant="HAND"/>
-            </cursor>
-        </ComboBox>
-    </HBox>
+                </value>
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
+            </ComboBox>
+        </HBox>
 
-    <HBox alignment="CENTER">
-        <Label text="Save current "/>
-        <TextField fx:id="configName" maxWidth="100" promptText="name"/>
-        <Button onAction="#saveConfig" text="save">
+        <HBox alignment="CENTER">
+            <Label text="Save current "/>
+            <Button onAction="#saveConfig" text="save">
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
+            </Button>
+        </HBox>
+
+        <Label/>
+        <Button onAction="#runSimulation" text="Run simulation">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </Button>
-    </HBox>
-
-    <Label/>
-    <Button onAction="#runSimulation" text="Run simulation">
-        <cursor>
-            <Cursor fx:constant="HAND"/>
-        </cursor>
-    </Button>
-</VBox>
+    </VBox>
 </center>
+<bottom>
+    <ScrollPane fx:id="logPane" prefHeight="80">
+        <VBox fx:id="logPaneBox">
+            <padding>
+                <Insets left="5"/>
+            </padding>
+        </VBox>
+    </ScrollPane>
+</bottom>
 </BorderPane>

@@ -9,8 +9,8 @@ public class Simulation implements Runnable {
     private final List<Animal> animals = new ArrayList<>();
 //    private final WorldMap map;
 
-//    public simulation.Simulation(List<Vector2d> positions, WorldMap map) {
-    public Simulation(List<Vector2d> positions) {
+    public Simulation(List<Vector2d> positions) {//, WorldMap map) {
+//        this.map = map;
         for (Vector2d position: positions) {
 //            try {
                 Animal animal = new Animal(position);
@@ -20,7 +20,6 @@ public class Simulation implements Runnable {
 //                System.out.println(exception.getMessage());
 //            }
         }
-//        this.map = map;
     }
 
     @Override

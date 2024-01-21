@@ -1,24 +1,19 @@
 package simulation;
 
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextFormatter;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.util.converter.IntegerStringConverter;
 import model.*;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class AppController {//implements MapChangeListener {
+public class AppController {
     @FXML private TextField mapWidthField;
     @FXML private TextField mapHeightField;
     @FXML private TextField grassCountField;
@@ -34,6 +29,8 @@ public class AppController {//implements MapChangeListener {
     @FXML private ComboBox mutationTypeSelect;
     @FXML private TextField genomeLengthField;
 
+    @FXML private ScrollPane logPane;
+    @FXML private VBox logPaneBox;
 
     private int mapWidth = 500;
     private int mapHeight = 500;
@@ -53,26 +50,36 @@ public class AppController {//implements MapChangeListener {
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
     private int simulationCount = 1;
 
-    public AppController() {
-    }
-
     @FXML
     public void initialize() {
-        animalCountField.setPromptText(String.format("%d", animalCount));
-        animalCountField.setTextFormatter(new TextFormatter<>(new IntegerStringConverter()));
-        animalCountField.textProperty().addListener(((observableValue, oldValue, newValue) -> {
-            try {
-                animalCountField.getTextFormatter().getValueConverter().fromString(newValue);
-                if (!validAnimalCount((int) animalCountField.getTextFormatter().getValue())) throw new NumberFormatException();
-                animalCountField.setBorder(null);
-            } catch (NumberFormatException e) {
-                animalCountField.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(2), new Insets(-2))));
-            }
-        }));
-    }
+        TextField[] textFields = {
+                mapWidthField,
+                mapHeightField,
+                grassCountField,
+                grassEnergyField,
+                grassGrowthField,
+                animalCountField,
+                animalEnergyField,
+                animalSatietyField,
+                animalBreedingEnergyField,
+                mutationMinField,
+                mutationMaxField,
+                genomeLengthField,
+        };
+        for (TextField obj: textFields) {
+            obj.textProperty().addListener((observable, oldValue, newValue) -> {
+                boolean valid = true;
+                int value = 0;
+                if (!newValue.matches("\\d*")) valid = false;
+                else value = Integer.parseInt(newValue);
+                if (!valid || value<0) {
+                    obj.setText(oldValue);
+                    log(obj.getId().replaceFirst("Field", "") + " must be a non-negative integer");
+                }
+            });
+        }
 
-    private boolean validAnimalCount(int value) {
-        return 1<=value && value<=1000;
+        logPane.vvalueProperty().bind(logPaneBox.heightProperty());
     }
 
     public void runSimulation() throws IOException {
@@ -92,7 +99,7 @@ public class AppController {//implements MapChangeListener {
 
         var scene = new Scene(viewRoot);
         stage.setScene(scene);
-        stage.setTitle("Simulation #" + simulationCount++);
+        stage.setTitle("Simulation #" + simulationCount);
         stage.minWidthProperty().bind(viewRoot.minWidthProperty());
         stage.minHeightProperty().bind(viewRoot.minHeightProperty());
         stage.show();
@@ -100,11 +107,16 @@ public class AppController {//implements MapChangeListener {
         Simulation simulation = new Simulation(positions);//, map);
         executorService.submit(simulation);
 
-
-        System.out.println((int) animalCountField.getTextFormatter().getValue());
-        System.out.println(animalCountField.getTextFormatter().getValueConverter().fromString(animalCountField.getText()));
+        log("simulation #" + simulationCount + " started");
+        simulationCount++;
     }
 
     public void saveConfig() {
+        log("config saved as");
+    }
+
+    public void log(String message) {
+        logPaneBox.getChildren().add(new Label(message));
+        logPane.setContent(logPaneBox);
     }
 }
