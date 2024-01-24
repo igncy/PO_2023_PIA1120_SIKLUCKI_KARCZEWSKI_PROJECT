@@ -8,7 +8,11 @@ import javafx.stage.Stage;
 import model.*;
 import javafx.fxml.FXML;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,62 +23,79 @@ public class AppController {
     @FXML private TextField grassCountField;
     @FXML private TextField grassEnergyField;
     @FXML private TextField grassGrowthField;
-    @FXML private ComboBox grassTypeSelect;
     @FXML private TextField animalCountField;
     @FXML private TextField animalEnergyField;
     @FXML private TextField animalSatietyField;
     @FXML private TextField animalBreedingEnergyField;
     @FXML private TextField mutationMinField;
     @FXML private TextField mutationMaxField;
-    @FXML private ComboBox mutationTypeSelect;
     @FXML private TextField genomeLengthField;
+
+    @FXML private ComboBox<String> grassSelect;
+    @FXML private ComboBox<String> mutationSelect;
+    @FXML private ComboBox<String> configSelect;
 
     @FXML private ScrollPane logPane;
     @FXML private VBox logPaneBox;
 
-    private int mapWidth = 500;
-    private int mapHeight = 500;
-    private int grassCount = 20;
-    private int grassEnergy = 10;
-    private int grassGrowth = 10;
     private int grassType = 0;
-    private int animalCount = 20;
-    private int animalEnergy = 50;
-    private int animalSatiety = 75;
-    private int animalBreedingEnergy = 50;
-    private int mutationMin = 0;
-    private int mutationMax = 5;
     private int mutationType = 0;
-    private int genomeLength = 5;
+    private int config = 0;
 
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
     private int simulationCount = 1;
 
+    private final List<InputField> inputFields = new ArrayList<>();
+    private InputField mapWidthInput;
+    private InputField mapHeightInput;
+    private InputField grassCountInput;
+    private InputField grassEnergyInput;
+    private InputField grassGrowthInput;
+    private InputField animalCountInput;
+    private InputField animalEnergyInput;
+    private InputField animalSatietyInput;
+    private InputField animalBreedingEnergyInput;
+    private InputField mutationMinInput;
+    private InputField mutationMaxInput;
+    private InputField genomeLengthInput;
+
     @FXML
     public void initialize() {
-        TextField[] textFields = {
-                mapWidthField,
-                mapHeightField,
-                grassCountField,
-                grassEnergyField,
-                grassGrowthField,
-                animalCountField,
-                animalEnergyField,
-                animalSatietyField,
-                animalBreedingEnergyField,
-                mutationMinField,
-                mutationMaxField,
-                genomeLengthField,
-        };
-        for (TextField obj: textFields) {
-            obj.textProperty().addListener((observable, oldValue, newValue) -> {
+        mapWidthInput = new InputField(mapWidthField, 500);
+        mapHeightInput = new InputField(mapHeightField, 500);
+        grassCountInput = new InputField(grassCountField, 20);
+        grassEnergyInput = new InputField(grassEnergyField, 10);
+        grassGrowthInput = new InputField(grassGrowthField, 10);
+        animalCountInput = new InputField(animalCountField, 20);
+        animalEnergyInput = new InputField(animalEnergyField, 50);
+        animalSatietyInput = new InputField(animalSatietyField, 75);
+        animalBreedingEnergyInput = new InputField(animalBreedingEnergyField, 50);
+        mutationMinInput = new InputField(mutationMinField, 0);
+        mutationMaxInput = new InputField(mutationMaxField, 5);
+        genomeLengthInput = new InputField(genomeLengthField, 5);
+
+        inputFields.add(mapWidthInput);
+        inputFields.add(mapHeightInput);
+        inputFields.add(grassCountInput);
+        inputFields.add(grassEnergyInput);
+        inputFields.add(grassGrowthInput);
+        inputFields.add(animalCountInput);
+        inputFields.add(animalEnergyInput);
+        inputFields.add(animalSatietyInput);
+        inputFields.add(animalBreedingEnergyInput);
+        inputFields.add(mutationMinInput);
+        inputFields.add(mutationMaxInput);
+        inputFields.add(genomeLengthInput);
+
+        for (InputField obj: inputFields) {
+            obj.getField().textProperty().addListener((observable, oldValue, newValue) -> {
                 boolean valid = true;
                 int value = 0;
                 if (!newValue.matches("\\d*")) valid = false;
                 else value = Integer.parseInt(newValue);
                 if (!valid || value<0) {
-                    obj.setText(oldValue);
-                    log(obj.getId().replaceFirst("Field", "") + " must be a non-negative integer");
+                    obj.getField().setText(oldValue);
+                    log(obj.getName() + " must be a non-negative integer");
                 }
             });
         }
@@ -109,10 +130,36 @@ public class AppController {
 
         log("simulation #" + simulationCount + " started");
         simulationCount++;
+
+        log(grassSelect.getValue());
+        log(mutationSelect.getValue());
+        log(configSelect.getValue());
+        if ("".equals(mapWidthField.getText()))
+            log("empty");
+        else {
+            log(mapWidthField.getText());
+            log(""+Integer.parseInt(mapWidthField.getText()));
+        }
     }
 
     public void saveConfig() {
-        log("config saved as");
+        if (true) return;
+        String name = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
+        try {
+            File file = new File(name);
+            if (file.createNewFile()) {
+                FileWriter fileWriter = new FileWriter(name);
+//                fileWriter.write();
+                fileWriter.close();
+                log("config saved as '" + name + "'");
+            }
+            else throw new IOException();
+        } catch (IOException e) {
+            log("error while saving config");
+        }
+    }
+
+    public void loadConfig() {
     }
 
     public void log(String message) {

@@ -131,8 +131,7 @@
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <String fx:value="none"/>
-                        <String fx:value="config 1"/>
-                        <String fx:value="config 2"/>
+                        <String fx:value="default"/>
                     </FXCollections>
                 </items>
                 <value>
