@@ -1,5 +1,7 @@
 package model;
 
+import util.WorldSettings;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,14 +9,18 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class AbstractWorldMap implements WorldMap {
-    private Boundary bonds = new Boundary(new Vector2d(Integer.MAX_VALUE, Integer.MAX_VALUE), new Vector2d(Integer.MIN_VALUE, Integer.MIN_VALUE));
+    private Boundary bonds;
     protected HashMap<Vector2d, List<Animal> > animals = new HashMap<>();
     protected HashMap<Vector2d, Grass> grass = new HashMap<>();
 
     private int ID;
 
-    public AbstractWorldMap(int ID){
+    public AbstractWorldMap(int ID, WorldSettings settings){
         this.ID = ID;
+        bonds = new Boundary(
+                new Vector2d(0, settings.mapWidth()),
+                new Vector2d(0, settings.mapHeight())
+        );
     }
 
     public int getID(){

@@ -1,12 +1,15 @@
 package model;
 
+import util.WorldSettings;
+
 import java.security.SecureRandom;
 
 public class GrassField extends AbstractWorldMap{
     private int count;
 
-    public  GrassField(int num, int ID) {
-        super(ID);
+    public GrassField(int ID, WorldSettings settings) {
+        super(ID, settings);
+        int num = settings.grassCount();
         this.count = num;
         int j = 0;
         while (j * j <= num * 10) {

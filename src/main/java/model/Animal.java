@@ -13,6 +13,9 @@ public class Animal implements WorldElement {
     private Animal parent2;
     private List<Animal> children;
 
+    private int grassEaten = 0;
+    private int daysAlive = 0;
+
     int genom[];
 
     public Animal() {
