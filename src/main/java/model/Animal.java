@@ -6,12 +6,15 @@ public class Animal implements WorldElement {
     private MapDirection direction;
     private Vector2d position;
     private int energy;
-
     private int ID;
     private int children_count;
+
+    private int days_of_life;
     private Animal parent1;
     private Animal parent2;
     private List<Animal> children;
+
+    private boolean alive = true;
 
     int genom[];
 
@@ -48,6 +51,7 @@ public class Animal implements WorldElement {
     public int[] getGenom() {
         return genom;
     }
+
 
     public void actualizeAncestors(Animal zwierz){
         int prev = zwierz.getChildren_count();
@@ -96,6 +100,10 @@ public class Animal implements WorldElement {
             this.position = position;
     }
 
+    public int getDays_of_life() {
+        return days_of_life;
+    }
+
     public void changeEnergy(int En){
         this.energy = En;
     }
@@ -118,5 +126,9 @@ public class Animal implements WorldElement {
 
     public int getEnergy() {
         return energy;
+    }
+
+    public void setDead(){
+        this.alive = false;
     }
 }
