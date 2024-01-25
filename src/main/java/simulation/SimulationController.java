@@ -67,4 +67,8 @@ public class SimulationController {//implements MapChangeListener {
 //            drawMap(message);
 //        });
 //    }
+
+    public void pause() {
+        System.out.println("e");
+    }
 }
