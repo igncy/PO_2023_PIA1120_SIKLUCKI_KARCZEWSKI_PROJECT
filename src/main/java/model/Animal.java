@@ -34,6 +34,7 @@ public class Animal implements WorldElement {
         this.ID = ID;
         this.genom = genom;
         this.settings = settings;
+        this.energy = settings.animalEnergy();
     }
     public Animal(Vector2d position, MapDirection direction, Animal par1, Animal par2, int ID, int[] genom) {
         this.position = position;
@@ -133,5 +134,9 @@ public class Animal implements WorldElement {
 
     public int getEnergy() {
         return energy;
+    }
+
+    public double getHealth() {
+        return energy>settings.animalSatiety() ? 1.0 : (double) energy/settings.animalSatiety();
     }
 }

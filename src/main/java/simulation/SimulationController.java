@@ -12,6 +12,7 @@ import model.Boundary;
 import model.WorldElement;
 import model.WorldMap;
 import util.MapChangeListener;
+import util.WorldSettings;
 
 import java.util.List;
 
@@ -22,6 +23,11 @@ public class SimulationController implements MapChangeListener {
 
     private WorldMap map;
     private int updateCount = 1;
+    private final WorldSettings settings;
+
+    public SimulationController(WorldSettings settings) {
+        this.settings = settings;
+    }
 
     public void drawMap(String message) {
         infoLabel.setText(String.format("update #%d", updateCount++));
@@ -53,8 +59,8 @@ public class SimulationController implements MapChangeListener {
         }
         for (List<Animal> list: map.getAnimals().values()) {
             if (list.isEmpty()) continue;
-            WorldElement element = list.get(0);
-            addCell(element.getPosition().getX()-minX+1, maxY-element.getPosition().getY()+1, "_"+element.toString()+"_", Color.ORANGE);
+            Animal element = list.get(0);
+            addCell(element.getPosition().getX()-minX+1, maxY-element.getPosition().getY()+1, "_"+element+"_", Color.RED, element.getHealth());
         }
     }
 
@@ -72,6 +78,13 @@ public class SimulationController implements MapChangeListener {
     private void addCell(int x, int y, String stringValue, Color color) {
         Label label = new Label(stringValue);
         label.setBackground(new Background(new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY)));
+        mapGrid.add(label, x, y);
+        GridPane.setHalignment(label, HPos.CENTER);
+    }
+    private void addCell(int x, int y, String stringValue, Color color, double opacity) {
+        Label label = new Label(stringValue);
+        label.setBackground(new Background(new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY)));
+        label.setOpacity(opacity);
         mapGrid.add(label, x, y);
         GridPane.setHalignment(label, HPos.CENTER);
     }
