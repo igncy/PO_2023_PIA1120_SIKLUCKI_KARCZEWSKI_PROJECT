@@ -1,5 +1,7 @@
 package model;
 
+import util.WorldSettings;
+
 import java.util.List;
 
 public class Animal implements WorldElement {
@@ -15,14 +17,24 @@ public class Animal implements WorldElement {
 
     private int grassEaten = 0;
     private int daysAlive = 0;
+    private WorldSettings settings;
 
     int genom[];
 
-    public Animal() {
-        this.direction = MapDirection.NORTH;
-        this.position = new Vector2d(2, 2);
-    }
+//    public Animal() {
+//        this.direction = MapDirection.NORTH;
+//        this.position = new Vector2d(2, 2);
+//    }
 
+    public Animal(Vector2d position, MapDirection direction, Animal par1, Animal par2, int ID, int[] genom, WorldSettings settings) {
+        this.position = position;
+        this.direction = direction;
+        this.parent1 = par1;
+        this.parent2 = par2;
+        this.ID = ID;
+        this.genom = genom;
+        this.settings = settings;
+    }
     public Animal(Vector2d position, MapDirection direction, Animal par1, Animal par2, int ID, int[] genom) {
         this.position = position;
         this.direction = direction;

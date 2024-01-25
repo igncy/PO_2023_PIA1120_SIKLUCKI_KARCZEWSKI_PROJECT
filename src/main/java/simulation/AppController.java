@@ -122,7 +122,6 @@ public class AppController {
         WorldSettings settings = loadConfig();
 
         WorldMap map = new GrassField(10, settings);
-
         SimulationController controller = new SimulationController();
         map.addObserver(controller);
         controller.setWorldMap(map);

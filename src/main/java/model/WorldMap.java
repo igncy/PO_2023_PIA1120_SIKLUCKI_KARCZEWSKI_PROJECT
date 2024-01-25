@@ -20,7 +20,7 @@ public interface WorldMap extends MoveValidator {
      * @param stwor The animal to place on the map.
      * @return True if the animal was placed. The animal cannot be placed if the move is not valid.
      */
-    public boolean place(WorldElement stwor);
+//    public boolean place(WorldElement stwor);
 
 
     /**
@@ -51,6 +51,7 @@ public interface WorldMap extends MoveValidator {
     public HashMap<Vector2d, List<Animal>> getAnimals();
     public WorldSettings getSettings();
 
+    public void place(Animal stwor);
     public Boundary getCurrentBounds();
 
     void addObserver(MapChangeListener observer);

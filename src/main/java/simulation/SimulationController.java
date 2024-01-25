@@ -3,14 +3,17 @@ package simulation;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import model.Animal;
 import model.Boundary;
 import model.WorldElement;
 import model.WorldMap;
 import util.MapChangeListener;
+
+import java.util.List;
 
 public class SimulationController implements MapChangeListener {
     @FXML private Label infoLabel;
@@ -25,7 +28,7 @@ public class SimulationController implements MapChangeListener {
         moveInfo.setText(message);
         clearGrid();
 
-        int CELL_WIDTH = 30, CELL_HEIGHT = 30;
+        int CELL_WIDTH = 20, CELL_HEIGHT = 20;
         Boundary boundary = map.getCurrentBounds();
         int minX = boundary.lowerLeft().getX();
         int maxX = boundary.upperRight().getX();
@@ -45,9 +48,14 @@ public class SimulationController implements MapChangeListener {
             mapGrid.getRowConstraints().add(new RowConstraints(CELL_HEIGHT));
         }
 
-//        for (WorldElement element: map.getElements()) {
-//            addCell(element.getPosition().getX()-minX+1, maxY-element.getPosition().getY()+1, element.toString());
-//        }
+        for (WorldElement element: map.getGrass().values()) {
+            addCell(element.getPosition().getX()-minX+1, maxY-element.getPosition().getY()+1, "___", Color.GREEN);
+        }
+        for (List<Animal> list: map.getAnimals().values()) {
+            if (list.isEmpty()) continue;
+            WorldElement element = list.get(0);
+            addCell(element.getPosition().getX()-minX+1, maxY-element.getPosition().getY()+1, "_"+element.toString()+"_", Color.ORANGE);
+        }
     }
 
     private void clearGrid() {
@@ -58,6 +66,12 @@ public class SimulationController implements MapChangeListener {
 
     private void addCell(int x, int y, String stringValue) {
         Label label = new Label(stringValue);
+        mapGrid.add(label, x, y);
+        GridPane.setHalignment(label, HPos.CENTER);
+    }
+    private void addCell(int x, int y, String stringValue, Color color) {
+        Label label = new Label(stringValue);
+        label.setBackground(new Background(new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY)));
         mapGrid.add(label, x, y);
         GridPane.setHalignment(label, HPos.CENTER);
     }

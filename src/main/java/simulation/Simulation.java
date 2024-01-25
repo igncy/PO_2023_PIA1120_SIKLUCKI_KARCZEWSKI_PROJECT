@@ -1,6 +1,7 @@
 package simulation;
 
 import model.*;
+import util.RandomVectorGenerator;
 import util.WorldSettings;
 
 import java.util.ArrayList;
@@ -14,15 +15,19 @@ public class Simulation implements Runnable {
     public Simulation(WorldMap map, WorldSettings settings) {
         this.map = map;
         this.settings = settings;
-//        for (Vector2d position: positions) {
-//            try {
-//                Animal animal = new Animal(position);
-//                map.place(animal);
-//                animals.add(animal);
-//            } catch (PositionAlreadyOccupiedException exception) {
-//                System.out.println(exception.getMessage());
-//            }
-//        }
+        RandomVectorGenerator generator = new RandomVectorGenerator();
+        int genome[] = {1,2,3,4,5};
+
+        for (int i=0; i<settings.animalCount(); i++) {
+            Animal animal = new Animal(generator.genVector(map.getCurrentBounds().lowerLeft(), map.getCurrentBounds().upperRight()),
+                    MapDirection.NORTH,
+                    null,
+                    null,
+                    1,
+                    genome,
+                    settings);
+            map.place(animal);
+        }
     }
 
     @Override

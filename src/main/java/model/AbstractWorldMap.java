@@ -22,8 +22,8 @@ public abstract class AbstractWorldMap implements WorldMap {
         this.settings = settings;
         this.ID = ID;
         bonds = new Boundary(
-                new Vector2d(0, settings.mapWidth()),
-                new Vector2d(0, settings.mapHeight())
+                new Vector2d(0, 0),
+                new Vector2d(settings.mapWidth(), settings.mapHeight())
         );
     }
 
@@ -39,29 +39,28 @@ public abstract class AbstractWorldMap implements WorldMap {
         return settings;
     }
 
-    public void actualize_bonds(int x1, int y1){
-        Boundary act_border = getCurrentBounds();
-        int xp = act_border.lowerLeft().getX(); int yp = act_border.lowerLeft().getY();
-        int xk = act_border.upperRight().getX(); int yk = act_border.upperRight().getY();
-        if(x1 < xp) {
-            xp = x1;
-        }
-        if(x1 > xk){
-            xk = x1;
-        }
-        if(y1 < yp){
-            yp = y1;
-        }
-        if(y1 > yk){
-            yk = y1;
-        }
-        this.setBonds(new Boundary(new Vector2d(xp, yp), new Vector2d(xk, yk)));
-    }
-
+//    public void actualize_bonds(int x1, int y1){
+//        Boundary act_border = getCurrentBounds();
+//        int xp = act_border.lowerLeft().getX(); int yp = act_border.lowerLeft().getY();
+//        int xk = act_border.upperRight().getX(); int yk = act_border.upperRight().getY();
+//        if(x1 < xp) {
+//            xp = x1;
+//        }
+//        if(x1 > xk){
+//            xk = x1;
+//        }
+//        if(y1 < yp){
+//            yp = y1;
+//        }
+//        if(y1 > yk){
+//            yk = y1;
+//        }
+//        this.setBonds(new Boundary(new Vector2d(xp, yp), new Vector2d(xk, yk)));
+//    }
 
     public void place(Animal stwor) {
         Vector2d val = stwor.getPosition();
-        actualize_bonds(val.getX(), val.getY());
+//        actualize_bonds(val.getX(), val.getY());
 
         /* I wersja
         if(animals.containsKey(val)){
@@ -83,6 +82,7 @@ public abstract class AbstractWorldMap implements WorldMap {
         }
         else{
             animals.put(val, List.of(stwor));
+            mapChanged("");
         }
 
 
@@ -193,7 +193,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     public void removeObserver(MapChangeListener observer) {
         observers.remove(observer);
     }
-    private void mapChanged(String message) {
+    public void mapChanged(String message) {
         for (MapChangeListener observer: observers)
             observer.mapChanged(this, message);
     }
