@@ -14,9 +14,13 @@ public abstract class AbstractWorldMap implements WorldMap {
     protected HashMap<Vector2d, List<Animal>> animals = new HashMap<>();
     protected HashMap<Vector2d, Grass> grass = new HashMap<>();
 
+    protected List<Animal> dead;
+
     private int ID;
     protected final WorldSettings settings;
     protected final ArrayList<MapChangeListener> observers = new ArrayList<>();
+
+    public int counter = 0;
 
     public AbstractWorldMap(int ID, WorldSettings settings){
         this.settings = settings;
@@ -59,6 +63,7 @@ public abstract class AbstractWorldMap implements WorldMap {
 //    }
 
     public void place(Animal stwor) {
+
         Vector2d val = stwor.getPosition();
 //        actualize_bonds(val.getX(), val.getY());
 
@@ -122,20 +127,72 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     public void reproduce(Animal nowy, List<Animal> grupa){
+
         Vector2d pos = nowy.getPosition();
+
         int min_energy = 5;
         int lost_energy = 3;
         for (int i = 0; i < grupa.size(); i++){
             Animal temp = grupa.get(i);
             MapDirection dir = MapDirection.NORTH;
-            int[] child_genom = {1, 2, 3};
+
+            int[] child_genom = generate_genom(nowy, temp);
+
             if(temp.getEnergy() >= min_energy) {
-                Animal child = new Animal(pos, dir,  nowy, temp, 5, child_genom);
-        }
+                Animal child = new Animal(pos, dir, nowy, temp, counter, child_genom);
+            }
 
         }
     }
 
+    public void sunrise(){
+
+        int genomLen = 10; // to tylko przykładowo podane, tak naprawdę jest to podawane jako parametr symulacji
+        int energyBoost = 3; // Również przykładowa dana
+
+        for (Map.Entry<Vector2d, List<Animal>> entry: this.animals.entrySet()) {
+            List <Animal> lista = entry.getValue();
+            Vector2d key = entry.getKey();
+
+            for (int i = 0; i < lista.size(); i++) {
+
+                Animal act = lista.get(i);
+
+                int lived = act.getDays_of_life();
+                int move = act.getGenom()[lived % genomLen];
+
+                for (int j = 0; j < move; j++){
+                    act.move(MoveDirection.RIGHT, this);
+                }
+
+                act.move(MoveDirection.FORWARD, this);
+                Vector2d newpos = act.getPosition();
+                act.changeEnergy(act.getEnergy() - 1);
+
+                if(this.grass.containsKey(newpos)){
+                    act.changeEnergy(act.getEnergy() + energyBoost);
+                    Grass plant = grass.get(newpos);
+                    plant.setActive(false);
+                }
+                else {
+                    if(act.getEnergy() == 0){
+                        act.setDead();
+                        this.dead.add(act);
+                        if(lista.size() == 1){
+                            animals.remove(key);
+                        }
+                        else{
+                            lista.remove(i);
+                        }
+                    }
+                }
+
+
+            }
+            grass.remove(grass.get(key));
+        }
+
+    }
 
     /*
     public void move(Animal stwor, MoveDirection direction){
@@ -150,9 +207,6 @@ public abstract class AbstractWorldMap implements WorldMap {
         place(stwor);
     }
     */
-
-
-
 
     public List<Animal> objectAt(Vector2d position){
         if(isOccupied(position)){
@@ -184,7 +238,8 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     @Override
     public boolean canMoveTo(Vector2d position) {
-        return false;
+        int x = position.getX();
+        return (x >= this.bonds.start().getX() && x <= this.bonds.koniec().getX());
     }
 
     public void addObserver(MapChangeListener observer) {
