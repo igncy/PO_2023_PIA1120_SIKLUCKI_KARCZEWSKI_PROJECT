@@ -1,6 +1,7 @@
 package simulation;
 
 import model.*;
+import util.WorldSettings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,9 +9,11 @@ import java.util.List;
 public class Simulation implements Runnable {
 //    private final List<Animal> animals = new ArrayList<>();
     private final WorldMap map;
+    private final WorldSettings settings;
 
-    public Simulation(WorldMap map) {
+    public Simulation(WorldMap map, WorldSettings settings) {
         this.map = map;
+        this.settings = settings;
 //        for (Vector2d position: positions) {
 //            try {
 //                Animal animal = new Animal(position);

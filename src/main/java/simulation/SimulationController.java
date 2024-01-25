@@ -1,18 +1,21 @@
 package simulation;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+import model.WorldMap;
+import util.MapChangeListener;
 
-public class SimulationController {//implements MapChangeListener {
+public class SimulationController implements MapChangeListener {
     @FXML private Label infoLabel;
     @FXML private GridPane mapGrid;
     @FXML private Label moveInfo;
 
-//    private WorldMap map;
+    private WorldMap map;
     private int updateCount = 1;
 
     public void drawMap(String message) {
@@ -69,5 +72,14 @@ public class SimulationController {//implements MapChangeListener {
 //    }
 
     public void pause() {
+    }
+
+    public void setWorldMap(WorldMap map) {
+        this.map = map;
+    }
+
+    @Override
+    public void mapChanged(WorldMap worldMap, String message) {
+        Platform.runLater(() -> drawMap(message));
     }
 }

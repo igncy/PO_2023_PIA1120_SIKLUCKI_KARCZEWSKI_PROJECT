@@ -1,5 +1,6 @@
 package model;
 
+import util.MapChangeListener;
 import util.WorldSettings;
 
 import java.util.HashMap;
@@ -49,5 +50,8 @@ public interface WorldMap extends MoveValidator {
     public HashMap<Vector2d, Grass> getGrass();
     public HashMap<Vector2d, List<Animal>> getAnimals();
     public WorldSettings getSettings();
+
+    void addObserver(MapChangeListener observer);
+    void removeObserver(MapChangeListener observer);
 }
 

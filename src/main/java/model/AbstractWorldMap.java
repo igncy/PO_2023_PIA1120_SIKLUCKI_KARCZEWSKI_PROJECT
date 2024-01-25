@@ -1,5 +1,6 @@
 package model;
 
+import util.MapChangeListener;
 import util.WorldSettings;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     private int ID;
     protected final WorldSettings settings;
+    protected final ArrayList<MapChangeListener> observers = new ArrayList<>();
 
     public AbstractWorldMap(int ID, WorldSettings settings){
         this.settings = settings;
@@ -183,5 +185,16 @@ public abstract class AbstractWorldMap implements WorldMap {
     @Override
     public boolean canMoveTo(Vector2d position) {
         return false;
+    }
+
+    public void addObserver(MapChangeListener observer) {
+        observers.add(observer);
+    }
+    public void removeObserver(MapChangeListener observer) {
+        observers.remove(observer);
+    }
+    private void mapChanged(String message) {
+        for (MapChangeListener observer: observers)
+            observer.mapChanged(this, message);
     }
 }

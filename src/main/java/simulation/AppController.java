@@ -121,14 +121,11 @@ public class AppController {
         log(configSelect.getValue());
         WorldSettings settings = loadConfig();
 
-
-//        List<Vector2d> positions = List.of(new Vector2d(2, 2), new Vector2d(3, 4));
         WorldMap map = new GrassField(10, settings);
-//        map.addObserver(new ConsoleMapDisplay());
 
         SimulationController controller = new SimulationController();
-//        map.addObserver(controller);
-//        controller.setWorldMap(map);
+        map.addObserver(controller);
+        controller.setWorldMap(map);
 
         Stage stage = new Stage();
         FXMLLoader loader = new FXMLLoader();
@@ -143,7 +140,7 @@ public class AppController {
         stage.minHeightProperty().bind(viewRoot.minHeightProperty());
         stage.show();
 
-        Simulation simulation = new Simulation(map);//, positions);
+        Simulation simulation = new Simulation(map, settings);
         executorService.submit(simulation);
         log("simulation #" + simulationCount++ + " started");
     }
