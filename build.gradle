@@ -1,5 +1,7 @@
 plugins {
+    id 'application'
     id 'java'
+    id 'org.openjfx.javafxplugin' version '0.0.13'
 }
 
 group = 'org.example'
@@ -7,13 +9,30 @@ version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    javafx {
+        version = '17'
+        modules = ['javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.swing', 'javafx.web']
+    }
 }
 
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation 'com.google.code.gson:gson:2.10.1'
 }
 
 test {
     useJUnitPlatform()
 }
+
+application {
+    getMainClass().set('Main')
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
+compileJava.options.encoding = 'UTF-8'

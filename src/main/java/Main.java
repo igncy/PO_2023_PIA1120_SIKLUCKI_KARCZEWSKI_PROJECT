@@ -1,7 +1,8 @@
+import javafx.application.Application;
+import simulation.App;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("start");
-
-        System.out.println("stop");
+        Application.launch(App.class);
     }
 }
