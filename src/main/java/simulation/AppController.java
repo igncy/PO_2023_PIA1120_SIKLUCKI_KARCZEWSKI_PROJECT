@@ -1,5 +1,6 @@
 package simulation;
 
+import com.google.gson.Gson;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -7,13 +8,16 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import model.*;
 import javafx.fxml.FXML;
+import util.WorldSettings;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -44,6 +48,8 @@ public class AppController {
 
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
     private int simulationCount = 1;
+    private final Gson gson = new Gson();
+    private final String configPath = getClass().getClassLoader().getResource("config").getPath();
 
     private final List<InputField> inputFields = new ArrayList<>();
     private InputField mapWidthInput;
@@ -127,29 +133,48 @@ public class AppController {
 
         Simulation simulation = new Simulation(positions);//, map);
         executorService.submit(simulation);
-
-        log("simulation #" + simulationCount + " started");
-        simulationCount++;
+        log("simulation #" + simulationCount++ + " started");
 
         log(grassSelect.getValue());
         log(mutationSelect.getValue());
         log(configSelect.getValue());
-        if ("".equals(mapWidthField.getText()))
-            log("empty");
-        else {
-            log(mapWidthField.getText());
-            log(""+Integer.parseInt(mapWidthField.getText()));
-        }
+
+        WorldSettings settings = loadConfig();
+    }
+
+    private WorldSettings getConfig() {
+        return new WorldSettings(
+                mapWidthInput.getValue(),
+                mapHeightInput.getValue(),
+                grassType,
+                grassCountInput.getValue(),
+                grassEnergyInput.getValue(),
+                grassGrowthInput.getValue(),
+                animalCountInput.getValue(),
+                animalEnergyInput.getValue(),
+                animalSatietyInput.getValue(),
+                animalBreedingEnergyInput.getValue(),
+                mutationType,
+                mutationMinInput.getValue(),
+                mutationMaxInput.getValue(),
+                genomeLengthInput.getValue()
+        );
     }
 
     public void saveConfig() {
-        if (true) return;
+        if (configPath == null) {
+            log("error while saving config");
+            return;
+        }
+
         String name = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
+        String filename = configPath + "/" + name + ".json";
+
         try {
-            File file = new File(name);
+            File file = new File(filename);
             if (file.createNewFile()) {
-                FileWriter fileWriter = new FileWriter(name);
-//                fileWriter.write();
+                FileWriter fileWriter = new FileWriter(filename);
+                fileWriter.write(gson.toJson(getConfig()));
                 fileWriter.close();
                 log("config saved as '" + name + "'");
             }
@@ -159,10 +184,35 @@ public class AppController {
         }
     }
 
-    public void loadConfig() {
+    private WorldSettings loadConfig() {
+        String name = configSelect.getValue();
+        if (name.equals("none"))
+            return getConfig();
+
+        if (configPath == null) {
+            log("error while loading config");
+            return getConfig();
+        }
+
+        String filename = configPath + "/" + name + ".json";
+
+        try {
+            File file = new File(filename);
+            Scanner reader = new Scanner(file);
+            StringBuilder data = new StringBuilder();
+            while (reader.hasNextLine()) {
+                data.append(reader.nextLine());
+            }
+            reader.close();
+            System.out.println(data);
+            return gson.fromJson(data.toString(), WorldSettings.class);
+        } catch (FileNotFoundException e) {
+            log("error while loading config");
+            return getConfig();
+        }
     }
 
-    public void log(String message) {
+    private void log(String message) {
         logPaneBox.getChildren().add(new Label(message));
         logPane.setContent(logPaneBox);
     }
