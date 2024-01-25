@@ -7,6 +7,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+import model.Boundary;
+import model.WorldElement;
 import model.WorldMap;
 import util.MapChangeListener;
 
@@ -24,25 +26,25 @@ public class SimulationController implements MapChangeListener {
         clearGrid();
 
         int CELL_WIDTH = 30, CELL_HEIGHT = 30;
-//        Boundary boundary = map.getCurrentBounds();
-//        int minX = boundary.lowerLeft().getX();
-//        int maxX = boundary.upperRight().getX();
-//        int maxY = boundary.upperRight().getY();
-//        int minY = boundary.lowerLeft().getY();
+        Boundary boundary = map.getCurrentBounds();
+        int minX = boundary.lowerLeft().getX();
+        int maxX = boundary.upperRight().getX();
+        int maxY = boundary.upperRight().getY();
+        int minY = boundary.lowerLeft().getY();
 
         addCell(0, 0, "y\\x");
         mapGrid.getColumnConstraints().add(new ColumnConstraints(CELL_WIDTH));
         mapGrid.getRowConstraints().add(new RowConstraints(CELL_HEIGHT));
 
-//        for (int x=minX; x<=maxX; x++) {
-//            addCell(x-minX+1, 0, String.format("%d", x));
-//            mapGrid.getColumnConstraints().add(new ColumnConstraints(CELL_WIDTH));
-//        }
-//        for (int y=maxY; y>=minY; y--) {
-//            addCell(0, maxY-y+1, String.format("%d", y));
-//            mapGrid.getRowConstraints().add(new RowConstraints(CELL_HEIGHT));
-//        }
-//
+        for (int x=minX; x<=maxX; x++) {
+            addCell(x-minX+1, 0, String.format("%d", x));
+            mapGrid.getColumnConstraints().add(new ColumnConstraints(CELL_WIDTH));
+        }
+        for (int y=maxY; y>=minY; y--) {
+            addCell(0, maxY-y+1, String.format("%d", y));
+            mapGrid.getRowConstraints().add(new RowConstraints(CELL_HEIGHT));
+        }
+
 //        for (WorldElement element: map.getElements()) {
 //            addCell(element.getPosition().getX()-minX+1, maxY-element.getPosition().getY()+1, element.toString());
 //        }
@@ -60,26 +62,17 @@ public class SimulationController implements MapChangeListener {
         GridPane.setHalignment(label, HPos.CENTER);
     }
 
-    //    public void setWorldMap(WorldMap map) {
-//        this.map = map;
-//    }
-
-//    @Override
-//    public void mapChanged(WorldMap worldMap, String message) {
-//        Platform.runLater(() -> {
-//            drawMap(message);
-//        });
-//    }
-
-    public void pause() {
-    }
-
-    public void setWorldMap(WorldMap map) {
+        public void setWorldMap(WorldMap map) {
         this.map = map;
     }
 
     @Override
     public void mapChanged(WorldMap worldMap, String message) {
-        Platform.runLater(() -> drawMap(message));
+        Platform.runLater(() -> {
+            drawMap(message);
+        });
+    }
+
+    public void pause() {
     }
 }

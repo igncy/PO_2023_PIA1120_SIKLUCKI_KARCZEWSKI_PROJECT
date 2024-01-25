@@ -51,6 +51,8 @@ public interface WorldMap extends MoveValidator {
     public HashMap<Vector2d, List<Animal>> getAnimals();
     public WorldSettings getSettings();
 
+    public Boundary getCurrentBounds();
+
     void addObserver(MapChangeListener observer);
     void removeObserver(MapChangeListener observer);
 }

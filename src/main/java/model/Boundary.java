@@ -1,3 +1,3 @@
 package model;
 
-public record Boundary(Vector2d start, Vector2d koniec) {}
+public record Boundary(Vector2d lowerLeft, Vector2d upperRight) {}

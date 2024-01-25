@@ -40,9 +40,9 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     public void actualize_bonds(int x1, int y1){
-        Boundary act_border = getCurrentBonds();
-        int xp = act_border.start().getX(); int yp = act_border.start().getY();
-        int xk = act_border.koniec().getX(); int yk = act_border.koniec().getY();
+        Boundary act_border = getCurrentBounds();
+        int xp = act_border.lowerLeft().getX(); int yp = act_border.lowerLeft().getY();
+        int xk = act_border.upperRight().getX(); int yk = act_border.upperRight().getY();
         if(x1 < xp) {
             xp = x1;
         }
@@ -169,7 +169,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
 
-    public Boundary getCurrentBonds() {
+    public Boundary getCurrentBounds() {
         return bonds;
     }
 
@@ -178,7 +178,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     public String toString(){
-        Boundary limit = getCurrentBonds();
+        Boundary limit = getCurrentBounds();
         return "XD";
     }
 

@@ -143,6 +143,7 @@ public class AppController {
         Simulation simulation = new Simulation(map, settings);
         executorService.submit(simulation);
         log("simulation #" + simulationCount++ + " started");
+        controller.drawMap("");
     }
 
     private WorldSettings getConfig() {
