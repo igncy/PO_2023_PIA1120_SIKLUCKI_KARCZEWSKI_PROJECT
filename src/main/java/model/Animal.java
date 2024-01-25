@@ -46,6 +46,7 @@ public class Animal implements WorldElement {
     public void addChild(Animal dziecko){
         this.children.add(dziecko);
         actualizeAncestors(this);
+        this.children_count += 1;
     }
 
     public int[] getGenom() {
@@ -98,6 +99,11 @@ public class Animal implements WorldElement {
         }
         if (validator.canMoveTo(position))
             this.position = position;
+        else{
+            for(int i = 0; i < 4; i++){
+                this.direction = this.direction.next();
+            }
+        }
     }
 
     public int getDays_of_life() {
@@ -130,5 +136,13 @@ public class Animal implements WorldElement {
 
     public void setDead(){
         this.alive = false;
+    }
+
+    public void increaseDays(){
+        this.days_of_life += 1;
+    }
+
+    public boolean getAlive(){
+        return alive;
     }
 }

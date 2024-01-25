@@ -76,7 +76,6 @@ public abstract class AbstractWorldMap implements WorldMap {
             animals.put(val, List.of(stwor));
         }
 
-
     }
 
     public int[] generate_genom(Animal par1, Animal par2){
@@ -112,22 +111,27 @@ public abstract class AbstractWorldMap implements WorldMap {
         return childGenom;
     }
 
-    public void reproduce(Animal nowy, List<Animal> grupa){
+    public void reproduce(Animal act, List<Animal> group){
 
-        Vector2d pos = nowy.getPosition();
+        Vector2d pos = act.getPosition();
 
         int min_energy = 5;
         int lost_energy = 3;
-        for (int i = 0; i < grupa.size(); i++){
-            Animal temp = grupa.get(i);
+
+        for (int i = 0; i < group.size(); i++){
+            Animal temp = group.get(i);
             MapDirection dir = MapDirection.NORTH;
 
-            int[] child_genom = generate_genom(nowy, temp);
+            int[] child_genom = generate_genom(act, temp);
 
             if(temp.getEnergy() >= min_energy) {
-                Animal child = new Animal(pos, dir, nowy, temp, counter, child_genom);
+                Animal child = new Animal(pos, dir, act, temp, counter, child_genom);
+                act.addChild(child);
+                temp.addChild(child);
+                temp.changeEnergy(temp.getEnergy() - lost_energy);
+                act.changeEnergy(temp.getEnergy() - lost_energy);
+                // tutaj być moze trzeba sprawdzić czy po rozmnażaniu któryś z rodziców nie umrze
             }
-
         }
     }
 
@@ -157,8 +161,8 @@ public abstract class AbstractWorldMap implements WorldMap {
 
                 if(this.grass.containsKey(newpos)){
                     act.changeEnergy(act.getEnergy() + energyBoost);
-                    Grass plant = grass.get(newpos);
-                    plant.setActive(false);
+                    Grass plant = this.grass.get(newpos);
+                    this.grass.remove(plant); //te 2 linijki można zawrzeć w 1 linijce ale wyciągnięcie plant mogłoby się przydać
                 }
                 else {
                     if(act.getEnergy() == 0){
@@ -172,10 +176,10 @@ public abstract class AbstractWorldMap implements WorldMap {
                         }
                     }
                 }
-
-
+                if(act.getAlive()){
+                    act.increaseDays();
+                }
             }
-            grass.remove(grass.get(key));
         }
 
     }
