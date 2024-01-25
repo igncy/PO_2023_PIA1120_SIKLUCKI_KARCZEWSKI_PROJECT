@@ -107,6 +107,12 @@ public class AppController {
         }
 
         logPane.vvalueProperty().bind(logPaneBox.heightProperty());
+
+        File[] files = new File(configPath).listFiles();
+        for (File file: files) {
+            if (!file.getName().equals("default.json"))
+                updateConfigSelect(file.getName().replaceFirst(".json", ""));
+        }
     }
 
     public void runSimulation() throws IOException {
@@ -167,7 +173,7 @@ public class AppController {
             return;
         }
 
-        String name = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
+        String name = new SimpleDateFormat("EEE d MMM HH;mm;ss").format(new java.util.Date());
         String filename = configPath + "/" + name + ".json";
 
         try {
@@ -176,6 +182,7 @@ public class AppController {
                 FileWriter fileWriter = new FileWriter(filename);
                 fileWriter.write(gson.toJson(getConfig()));
                 fileWriter.close();
+                updateConfigSelect(name);
                 log("config saved as '" + name + "'");
             }
             else throw new IOException();
@@ -210,6 +217,11 @@ public class AppController {
             log("error while loading config");
             return getConfig();
         }
+    }
+
+    private void updateConfigSelect(String value) {
+        if (!configSelect.getItems().contains(value))
+            configSelect.getItems().add(value);
     }
 
     private void log(String message) {
