@@ -1,11 +1,14 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class AbstractWorldMap implements WorldMap {
     private Boundary bonds = new Boundary(new Vector2d(Integer.MAX_VALUE, Integer.MAX_VALUE), new Vector2d(Integer.MIN_VALUE, Integer.MIN_VALUE));
-    protected HashMap<Vector2d, Animal> animals = new HashMap<>();
+    protected HashMap<Vector2d, List<Animal> > animals = new HashMap<>();
     protected HashMap<Vector2d, Grass> grass = new HashMap<>();
 
     private int ID;
@@ -42,20 +45,88 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
 
-    public boolean place(Animal stwor) {
+    public void place(Animal stwor) {
         Vector2d val = stwor.getPosition();
-        boolean valid = false;
-        if(canMoveTo(val)){
-            actualize_bonds(val.getX(), val.getY());
-            animals.put(val, stwor);
-            valid = true;
+        actualize_bonds(val.getX(), val.getY());
+
+        /* I wersja
+        if(animals.containsKey(val)){
+            List<Animal> lista = animals.get(val);
+            animals.remove(val);
+            lista.add(stwor);
+            animals.put(val, lista);
         }
-        return valid;
+        else{
+            List<Animal> nowa_lista = new ArrayList<>();
+            nowa_lista.add(stwor);
+            animals.put(val, nowa_lista);
+        }
+        */
+
+        if(animals.containsKey(val)){
+            List<Animal> lista = animals.get(val);
+            lista.add(stwor);
+        }
+        else{
+            animals.put(val, List.of(stwor));
+        }
+
+
     }
 
+    public int[] generate_genom(Animal par1, Animal par2){
+
+        int genomLen = 104;
+
+        int E1 = par1.getEnergy(); int E2 = par2.getEnergy();
+        float percent = (float) E1/(E1 + E2);
+        int x = (int) Math.floor(percent * genomLen);
+        int sideChoice = ThreadLocalRandom.current().nextInt(1, 3);
+        int p1 = 0; int k1 = 0; int p2 = 0; int k2 = 0;
+
+        if(sideChoice == 1)
+        {
+            p1 = 0; k1 = x;
+            p2 = x; k2 = genomLen-1;
+        }
+        else
+        {
+            p1 = genomLen - x; k1 = genomLen - 1;
+            p2 = 0; k2 = genomLen - x;
+        }
+
+        int childGenom[] = new int[genomLen];
+        for(int i = p1; i <= k1; i++){
+            childGenom[i] = par1.getGenom()[i];
+        }
+
+        for (int i = p2; i <= k2; i++){
+            childGenom[i] = par2.getGenom()[i];
+        }
+
+        return childGenom;
+    }
+
+    public void reproduce(Animal nowy, List<Animal> grupa){
+        Vector2d pos = nowy.getPosition();
+        int min_energy = 5;
+        int lost_energy = 3;
+        for (int i = 0; i < grupa.size(); i++){
+            Animal temp = grupa.get(i);
+            MapDirection dir = MapDirection.NORTH;
+            int[] child_genom = {1, 2, 3};
+            if(temp.getEnergy() >= min_energy) {
+                Animal child = new Animal(pos, dir,  nowy, temp, 5, child_genom);
+        }
+
+        }
+    }
+
+
+    /*
     public void move(Animal stwor, MoveDirection direction){
         Vector2d prev = stwor.getPosition();
-        Animal animal_test = new Animal(prev, stwor.getOrient(), null ,null);
+        Animal animal_test = new Animal(prev, stwor.getOrient(), null ,null, -1);
         animal_test.move(direction, this);
         if (!canMoveTo(animal_test.getPosition())) {
             return;
@@ -64,10 +135,12 @@ public abstract class AbstractWorldMap implements WorldMap {
         stwor.move(direction, this);
         place(stwor);
     }
+    */
 
 
 
-    public WorldElement objectAt(Vector2d position){
+
+    public List<Animal> objectAt(Vector2d position){
         if(isOccupied(position)){
             return animals.get(position);
         }
@@ -77,13 +150,10 @@ public abstract class AbstractWorldMap implements WorldMap {
         return (animals.containsKey(position));
     }
 
-    public HashMap<Vector2d, Animal> getAnimals() {
+    public HashMap<Vector2d, List<Animal> > getAnimals() {
         return animals;
     }
 
-    public boolean canMoveTo(Vector2d position) {
-        return (!isOccupied(position));
-    }
 
     public Boundary getCurrentBonds() {
         return bonds;
@@ -98,6 +168,8 @@ public abstract class AbstractWorldMap implements WorldMap {
         return "XD";
     }
 
-
-
+    @Override
+    public boolean canMoveTo(Vector2d position) {
+        return false;
+    }
 }
