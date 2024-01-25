@@ -1,12 +1,15 @@
 package model;
 
+import util.WorldSettings;
+
 import java.security.SecureRandom;
 
-public class GrassField extends AbstractWorldMap{
+public class GrassField extends AbstractWorldMap implements WorldMap {
     private int count;
 
-    public  GrassField(int num, int ID) {
-        super(ID);
+    public GrassField(int ID, WorldSettings settings) {
+        super(ID, settings);
+        int num = settings.grassCount();
         this.count = num;
         int j = 0;
         while (j * j <= num * 10) {
@@ -24,7 +27,8 @@ public class GrassField extends AbstractWorldMap{
                 coord[count][0] = x;
                 coord[count][1] = y;
                 count += 1;
-                actualize_bonds(x, y);
+//                actualize_bonds(x, y);
+                mapChanged("");
                 Vector2d vec = new Vector2d(x, y);
                 this.grass.put(vec, new Grass(vec));
             }
@@ -35,9 +39,9 @@ public class GrassField extends AbstractWorldMap{
         return count;
     }
 
-    @Override
-    public boolean place(WorldElement stwor) {
-        return false;
-    }
+//    @Override
+//    public boolean place(WorldElement stwor) {
+//        return false;
+//    }
 }
 

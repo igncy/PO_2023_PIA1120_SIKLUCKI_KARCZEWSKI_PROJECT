@@ -116,13 +116,15 @@ public class AppController {
     }
 
     public void runSimulation() throws IOException {
-        List<Vector2d> positions = List.of(new Vector2d(2, 2), new Vector2d(3, 4));
-//        WorldMap map = new GrassField(10);
-//        map.addObserver(new ConsoleMapDisplay());
+        log(grassSelect.getValue());
+        log(mutationSelect.getValue());
+        log(configSelect.getValue());
+        WorldSettings settings = loadConfig();
 
-        SimulationController controller = new SimulationController();
-//        map.addObserver(controller);
-//        controller.setWorldMap(map);
+        WorldMap map = new GrassField(10, settings);
+        SimulationController controller = new SimulationController(settings);
+        map.addObserver(controller);
+        controller.setWorldMap(map);
 
         Stage stage = new Stage();
         FXMLLoader loader = new FXMLLoader();
@@ -137,15 +139,10 @@ public class AppController {
         stage.minHeightProperty().bind(viewRoot.minHeightProperty());
         stage.show();
 
-        Simulation simulation = new Simulation(positions);//, map);
+        Simulation simulation = new Simulation(map, settings);
         executorService.submit(simulation);
         log("simulation #" + simulationCount++ + " started");
-
-        log(grassSelect.getValue());
-        log(mutationSelect.getValue());
-        log(configSelect.getValue());
-
-        WorldSettings settings = loadConfig();
+        controller.drawMap("");
     }
 
     private WorldSettings getConfig() {

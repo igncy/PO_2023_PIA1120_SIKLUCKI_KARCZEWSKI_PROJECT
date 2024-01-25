@@ -1,5 +1,8 @@
 package model;
 
+import util.MapChangeListener;
+import util.WorldSettings;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,18 +10,25 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class AbstractWorldMap implements WorldMap {
-    private Boundary bonds = new Boundary(new Vector2d(Integer.MAX_VALUE, Integer.MAX_VALUE), new Vector2d(Integer.MIN_VALUE, Integer.MIN_VALUE));
-    protected HashMap<Vector2d, List<Animal> > animals = new HashMap<>();
+    private Boundary bonds;
+    protected HashMap<Vector2d, List<Animal>> animals = new HashMap<>();
     protected HashMap<Vector2d, Grass> grass = new HashMap<>();
 
     protected List<Animal> dead;
 
     private int ID;
+    protected final WorldSettings settings;
+    protected final ArrayList<MapChangeListener> observers = new ArrayList<>();
 
     public int counter = 0;
 
-    public AbstractWorldMap(int ID){
+    public AbstractWorldMap(int ID, WorldSettings settings){
+        this.settings = settings;
         this.ID = ID;
+        bonds = new Boundary(
+                new Vector2d(0, 0),
+                new Vector2d(settings.mapWidth(), settings.mapHeight())
+        );
     }
 
     public int getID(){
@@ -29,30 +39,33 @@ public abstract class AbstractWorldMap implements WorldMap {
         return grass;
     }
 
-    public void actualize_bonds(int x1, int y1){
-        Boundary act_border = getCurrentBonds();
-        int xp = act_border.start().getX(); int yp = act_border.start().getY();
-        int xk = act_border.koniec().getX(); int yk = act_border.koniec().getY();
-        if(x1 < xp) {
-            xp = x1;
-        }
-        if(x1 > xk){
-            xk = x1;
-        }
-        if(y1 < yp){
-            yp = y1;
-        }
-        if(y1 > yk){
-            yk = y1;
-        }
-        this.setBonds(new Boundary(new Vector2d(xp, yp), new Vector2d(xk, yk)));
+    public WorldSettings getSettings() {
+        return settings;
     }
 
+//    public void actualize_bonds(int x1, int y1){
+//        Boundary act_border = getCurrentBounds();
+//        int xp = act_border.lowerLeft().getX(); int yp = act_border.lowerLeft().getY();
+//        int xk = act_border.upperRight().getX(); int yk = act_border.upperRight().getY();
+//        if(x1 < xp) {
+//            xp = x1;
+//        }
+//        if(x1 > xk){
+//            xk = x1;
+//        }
+//        if(y1 < yp){
+//            yp = y1;
+//        }
+//        if(y1 > yk){
+//            yk = y1;
+//        }
+//        this.setBonds(new Boundary(new Vector2d(xp, yp), new Vector2d(xk, yk)));
+//    }
 
     public void place(Animal stwor) {
 
         Vector2d val = stwor.getPosition();
-        actualize_bonds(val.getX(), val.getY());
+//        actualize_bonds(val.getX(), val.getY());
 
         /* I wersja
         if(animals.containsKey(val)){
@@ -74,6 +87,7 @@ public abstract class AbstractWorldMap implements WorldMap {
         }
         else{
             animals.put(val, List.of(stwor));
+            mapChanged("");
         }
 
 
@@ -209,7 +223,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
 
-    public Boundary getCurrentBonds() {
+    public Boundary getCurrentBounds() {
         return bonds;
     }
 
@@ -218,7 +232,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     public String toString(){
-        Boundary limit = getCurrentBonds();
+        Boundary limit = getCurrentBounds();
         return "XD";
     }
 
@@ -226,5 +240,16 @@ public abstract class AbstractWorldMap implements WorldMap {
     public boolean canMoveTo(Vector2d position) {
         int x = position.getX();
         return (x >= this.bonds.start().getX() && x <= this.bonds.koniec().getX());
+    }
+
+    public void addObserver(MapChangeListener observer) {
+        observers.add(observer);
+    }
+    public void removeObserver(MapChangeListener observer) {
+        observers.remove(observer);
+    }
+    public void mapChanged(String message) {
+        for (MapChangeListener observer: observers)
+            observer.mapChanged(this, message);
     }
 }
