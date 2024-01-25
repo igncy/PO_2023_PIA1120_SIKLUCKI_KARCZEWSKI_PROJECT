@@ -55,16 +55,17 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     public void move(Animal stwor, MoveDirection direction){
         Vector2d prev = stwor.getPosition();
-        Animal animal_test = new Animal(prev, stwor.getOrient());
+        Animal animal_test = new Animal(prev, stwor.getOrient(), null ,null);
         animal_test.move(direction, this);
         if (!canMoveTo(animal_test.getPosition())) {
             return;
         }
-
         animals.remove(prev);
         stwor.move(direction, this);
         place(stwor);
     }
+
+
 
     public WorldElement objectAt(Vector2d position){
         if(isOccupied(position)){
