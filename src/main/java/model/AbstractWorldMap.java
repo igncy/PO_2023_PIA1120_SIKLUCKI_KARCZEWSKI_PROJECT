@@ -10,12 +10,14 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class AbstractWorldMap implements WorldMap {
     private Boundary bonds;
-    protected HashMap<Vector2d, List<Animal> > animals = new HashMap<>();
+    protected HashMap<Vector2d, List<Animal>> animals = new HashMap<>();
     protected HashMap<Vector2d, Grass> grass = new HashMap<>();
 
     private int ID;
+    protected final WorldSettings settings;
 
     public AbstractWorldMap(int ID, WorldSettings settings){
+        this.settings = settings;
         this.ID = ID;
         bonds = new Boundary(
                 new Vector2d(0, settings.mapWidth()),
@@ -29,6 +31,10 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     public HashMap<Vector2d, Grass> getGrass() {
         return grass;
+    }
+
+    public WorldSettings getSettings() {
+        return settings;
     }
 
     public void actualize_bonds(int x1, int y1){

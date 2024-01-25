@@ -116,8 +116,14 @@ public class AppController {
     }
 
     public void runSimulation() throws IOException {
-        List<Vector2d> positions = List.of(new Vector2d(2, 2), new Vector2d(3, 4));
-//        WorldMap map = new GrassField(10);
+        log(grassSelect.getValue());
+        log(mutationSelect.getValue());
+        log(configSelect.getValue());
+        WorldSettings settings = loadConfig();
+
+
+//        List<Vector2d> positions = List.of(new Vector2d(2, 2), new Vector2d(3, 4));
+        WorldMap map = new GrassField(10, settings);
 //        map.addObserver(new ConsoleMapDisplay());
 
         SimulationController controller = new SimulationController();
@@ -137,15 +143,9 @@ public class AppController {
         stage.minHeightProperty().bind(viewRoot.minHeightProperty());
         stage.show();
 
-        Simulation simulation = new Simulation(positions);//, map);
+        Simulation simulation = new Simulation(map);//, positions);
         executorService.submit(simulation);
         log("simulation #" + simulationCount++ + " started");
-
-        log(grassSelect.getValue());
-        log(mutationSelect.getValue());
-        log(configSelect.getValue());
-
-        WorldSettings settings = loadConfig();
     }
 
     private WorldSettings getConfig() {
