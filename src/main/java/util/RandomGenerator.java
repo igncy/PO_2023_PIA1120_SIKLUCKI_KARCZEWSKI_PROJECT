@@ -5,13 +5,13 @@ import model.Vector2d;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class RandomVectorGenerator {
+public class RandomGenerator {
     private final ArrayList<Vector2d> vectors = new ArrayList<>();
 
     public Vector2d genVector(Vector2d lower, Vector2d upper) {
         return new Vector2d(
-                ThreadLocalRandom.current().nextInt(lower.getX(), upper.getX()),
-                ThreadLocalRandom.current().nextInt(lower.getY(), upper.getY())
+                ThreadLocalRandom.current().nextInt(lower.getX(), upper.getX()+1),
+                ThreadLocalRandom.current().nextInt(lower.getY(), upper.getY()+1)
         );
     }
 
@@ -21,5 +21,9 @@ public class RandomVectorGenerator {
             vector = genVector(lower, upper);
         vectors.add(vector);
         return vector;
+    }
+
+    public int randInt(int min, int max) {
+        return ThreadLocalRandom.current().nextInt(min, max+1);
     }
 }

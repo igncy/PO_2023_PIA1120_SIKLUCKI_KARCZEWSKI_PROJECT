@@ -4,7 +4,9 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import model.Animal;
@@ -13,6 +15,7 @@ import model.WorldElement;
 import model.WorldMap;
 import util.MapChangeListener;
 import util.WorldSettings;
+import util.WorldStats;
 
 import java.util.List;
 
@@ -20,10 +23,12 @@ public class SimulationController implements MapChangeListener {
     @FXML private Label infoLabel;
     @FXML private GridPane mapGrid;
     @FXML private Label moveInfo;
+    @FXML private Label animalCountLabel;
 
     private WorldMap map;
     private int updateCount = 1;
     private final WorldSettings settings;
+    private WorldStats stats;
 
     public SimulationController(WorldSettings settings) {
         this.settings = settings;
@@ -35,22 +40,21 @@ public class SimulationController implements MapChangeListener {
         clearGrid();
 
         int CELL_WIDTH = 20, CELL_HEIGHT = 20;
-        Boundary boundary = map.getCurrentBounds();
+        Boundary boundary = map.getCurrentBonds();
         int minX = boundary.lowerLeft().getX();
         int maxX = boundary.upperRight().getX();
         int maxY = boundary.upperRight().getY();
         int minY = boundary.lowerLeft().getY();
 
-        addCell(0, 0, "y\\x");
+//        addCell(0, 0, "y\\x");
         mapGrid.getColumnConstraints().add(new ColumnConstraints(CELL_WIDTH));
         mapGrid.getRowConstraints().add(new RowConstraints(CELL_HEIGHT));
-
         for (int x=minX; x<=maxX; x++) {
-            addCell(x-minX+1, 0, String.format("%d", x));
+//            addCell(x-minX+1, 0, String.format("%d", x));
             mapGrid.getColumnConstraints().add(new ColumnConstraints(CELL_WIDTH));
         }
         for (int y=maxY; y>=minY; y--) {
-            addCell(0, maxY-y+1, String.format("%d", y));
+//            addCell(0, maxY-y+1, String.format("%d", y));
             mapGrid.getRowConstraints().add(new RowConstraints(CELL_HEIGHT));
         }
 
@@ -62,6 +66,9 @@ public class SimulationController implements MapChangeListener {
             Animal element = list.get(0);
             addCell(element.getPosition().getX()-minX+1, maxY-element.getPosition().getY()+1, "_"+element+"_", Color.RED, element.getHealth());
         }
+
+
+        animalCountLabel.setText(String.format("%d", stats.animalCount()));
     }
 
     private void clearGrid() {
@@ -101,5 +108,23 @@ public class SimulationController implements MapChangeListener {
     }
 
     public void pause() {
+    }
+
+    public void click(MouseEvent event) {
+        Node clickedNode = event.getPickResult().getIntersectedNode();
+        if (clickedNode != mapGrid) {
+            Node parent = clickedNode.getParent();
+            while (parent != mapGrid) {
+                clickedNode = parent;
+                parent = clickedNode.getParent();
+            }
+            Integer colIndex = GridPane.getColumnIndex(clickedNode);
+            Integer rowIndex = GridPane.getRowIndex(clickedNode);
+            System.out.println("col: " + colIndex + " row: " + rowIndex);
+        }
+    }
+
+    public void setStats(WorldStats stats) {
+        this.stats = stats;
     }
 }

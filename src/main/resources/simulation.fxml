@@ -6,19 +6,41 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.Cursor?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.HBox?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            minHeight="700.0" minWidth="800.0">
-<center>
-<VBox alignment="CENTER">
-    <Label fx:id="infoLabel" text="test" textAlignment="CENTER"/>
-    <Label fx:id="moveInfo"/>
-    <GridPane fx:id="mapGrid" gridLinesVisible="true" alignment="CENTER"/>
-    <Button onAction="#pause" text="Pause">
-        <cursor>
-            <Cursor fx:constant="HAND"/>
-        </cursor>
-    </Button>
-</VBox>
-</center>
+            minHeight="850.0" minWidth="850.0">
+<right>
+    <VBox alignment="CENTER">
+        <Label fx:id="infoLabel" text="test" textAlignment="CENTER"/>
+        <Label fx:id="moveInfo"/>
+        <GridPane fx:id="mapGrid" gridLinesVisible="true" alignment="CENTER" onMouseClicked="#click"/>
+        <padding>
+            <Insets right="10"/>
+        </padding>
+    </VBox>
+</right>
+
+<left>
+    <VBox alignment="CENTER">
+        <Label text="Simulation statistics" style="-fx-font-weight: bold"/>
+        <Label/>
+
+        <HBox alignment="CENTER">
+            <Label text="Animal count: "/>
+            <Label fx:id="animalCountLabel"/>
+        </HBox>
+
+        <Label/>
+        <Button onAction="#pause" text="Pause">
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </Button>
+        <padding>
+            <Insets left="10"/>
+        </padding>
+    </VBox>
+</left>
 </BorderPane>

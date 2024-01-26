@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import model.*;
 import javafx.fxml.FXML;
 import util.WorldSettings;
+import util.WorldStats;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -67,18 +68,18 @@ public class AppController {
 
     @FXML
     public void initialize() {
-        mapWidthInput = new InputField(mapWidthField, 500);
-        mapHeightInput = new InputField(mapHeightField, 500);
+        mapWidthInput = new InputField(mapWidthField, 30);
+        mapHeightInput = new InputField(mapHeightField, 30);
         grassCountInput = new InputField(grassCountField, 20);
         grassEnergyInput = new InputField(grassEnergyField, 10);
-        grassGrowthInput = new InputField(grassGrowthField, 10);
+        grassGrowthInput = new InputField(grassGrowthField, 5);
         animalCountInput = new InputField(animalCountField, 20);
-        animalEnergyInput = new InputField(animalEnergyField, 50);
-        animalSatietyInput = new InputField(animalSatietyField, 75);
+        animalEnergyInput = new InputField(animalEnergyField, 30);
+        animalSatietyInput = new InputField(animalSatietyField, 50);
         animalBreedingEnergyInput = new InputField(animalBreedingEnergyField, 50);
         mutationMinInput = new InputField(mutationMinField, 0);
-        mutationMaxInput = new InputField(mutationMaxField, 5);
-        genomeLengthInput = new InputField(genomeLengthField, 5);
+        mutationMaxInput = new InputField(mutationMaxField, 10);
+        genomeLengthInput = new InputField(genomeLengthField, 10);
 
         inputFields.add(mapWidthInput);
         inputFields.add(mapHeightInput);
@@ -125,6 +126,8 @@ public class AppController {
         SimulationController controller = new SimulationController(settings);
         map.addObserver(controller);
         controller.setWorldMap(map);
+        WorldStats stats = new WorldStats(map);
+        controller.setStats(stats);
 
         Stage stage = new Stage();
         FXMLLoader loader = new FXMLLoader();

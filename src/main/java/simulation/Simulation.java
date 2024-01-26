@@ -1,30 +1,33 @@
 package simulation;
 
 import model.*;
-import util.RandomVectorGenerator;
+import util.RandomGenerator;
 import util.WorldSettings;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Simulation implements Runnable {
 //    private final List<Animal> animals = new ArrayList<>();
     private final WorldMap map;
     private final WorldSettings settings;
+    private final RandomGenerator generator = new RandomGenerator();
+
+    int[] genGenome(int length) {
+        int[] genome = new int[length];
+        for (int i=0; i<length; i++)
+            genome[i] = generator.randInt(0, 7);
+        return genome;
+    }
 
     public Simulation(WorldMap map, WorldSettings settings) {
         this.map = map;
         this.settings = settings;
-        RandomVectorGenerator generator = new RandomVectorGenerator();
-        int genome[] = {1,2,3,4,5};
 
         for (int i=0; i<settings.animalCount(); i++) {
-            Animal animal = new Animal(generator.genVector(map.getCurrentBounds().lowerLeft(), map.getCurrentBounds().upperRight()),
+            Animal animal = new Animal(generator.genVector(map.getCurrentBonds().lowerLeft(), map.getCurrentBonds().upperRight()),
                     MapDirection.NORTH,
                     null,
                     null,
-                    1,
-                    genome,
+                    map.counter(),
+                    genGenome(settings.genomeLength()),
                     settings);
             map.place(animal);
         }
