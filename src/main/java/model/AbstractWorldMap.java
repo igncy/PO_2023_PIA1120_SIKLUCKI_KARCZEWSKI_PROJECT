@@ -80,7 +80,7 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     public int[] generate_genom(Animal par1, Animal par2){
 
-        int genomLen = 104;
+        int genomLen = 104; //przykładowe dane, będziemy brać z ustawień symualacji
 
         int E1 = par1.getEnergy(); int E2 = par2.getEnergy();
         float percent = (float) E1/(E1 + E2);
@@ -124,7 +124,7 @@ public abstract class AbstractWorldMap implements WorldMap {
 
             int[] child_genom = generate_genom(act, temp);
 
-            if(temp.getEnergy() >= min_energy) {
+            if(temp.getID() != act.getID() && temp.getEnergy() >= min_energy) {
                 Animal child = new Animal(pos, dir, act, temp, counter, child_genom);
                 act.addChild(child);
                 temp.addChild(child);
@@ -155,7 +155,13 @@ public abstract class AbstractWorldMap implements WorldMap {
                     act.move(MoveDirection.RIGHT, this);
                 }
 
+                int prevX = act.getPosition().getX(); int prevY = act.getPosition().getY();
                 act.move(MoveDirection.FORWARD, this);
+
+                if(act.getPosition().getX() != prevX || act.getPosition().getY() != prevY){
+                    reproduce(act, animals.get(act.getPosition()));
+                }
+
                 Vector2d newpos = act.getPosition();
                 act.changeEnergy(act.getEnergy() - 1);
 
@@ -227,8 +233,16 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     @Override
-    public boolean canMoveTo(Vector2d position) {
-        int x = position.getX();
-        return (x >= this.bonds.start().getX() && x <= this.bonds.koniec().getX());
+    public int canMoveTo(Vector2d position) {
+        int x = position.getX(); int y = position.getY();
+        int x_min = this.bonds.start().getX(); int x_max = this.bonds.koniec().getX();
+        boolean valid = (y >= this.bonds.start().getY() && y <= this.bonds.koniec().getY());
+        if(!valid) { return 0; } //
+        else{
+            if(x < x_min){ return -1; } // lewy brzeg
+            else if(x > x_max) { return 1; } // prawy brzeg
+            else{ return 2; } // brak ograniczeń
+        }
+
     }
 }
