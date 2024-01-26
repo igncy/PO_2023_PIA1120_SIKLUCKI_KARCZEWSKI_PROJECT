@@ -22,7 +22,7 @@ public class Simulation implements Runnable {
         this.settings = settings;
 
         for (int i=0; i<settings.animalCount(); i++) {
-            Animal animal = new Animal(generator.genVector(map.getCurrentBonds().lowerLeft(), map.getCurrentBonds().upperRight()),
+            Animal animal = new Animal(generator.genVector(map.getCurrentBonds().start(), map.getCurrentBonds().koniec()),
                     MapDirection.NORTH,
                     null,
                     null,

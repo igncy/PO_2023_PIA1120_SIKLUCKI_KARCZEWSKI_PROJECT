@@ -41,10 +41,10 @@ public class SimulationController implements MapChangeListener {
 
         int CELL_WIDTH = 20, CELL_HEIGHT = 20;
         Boundary boundary = map.getCurrentBonds();
-        int minX = boundary.lowerLeft().getX();
-        int maxX = boundary.upperRight().getX();
-        int maxY = boundary.upperRight().getY();
-        int minY = boundary.lowerLeft().getY();
+        int minX = boundary.start().getX();
+        int maxX = boundary.koniec().getX();
+        int maxY = boundary.koniec().getY();
+        int minY = boundary.start().getY();
 
 //        addCell(0, 0, "y\\x");
         mapGrid.getColumnConstraints().add(new ColumnConstraints(CELL_WIDTH));
