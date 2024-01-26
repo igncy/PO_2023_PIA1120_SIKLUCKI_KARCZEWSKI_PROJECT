@@ -21,27 +21,27 @@
 
         <HBox alignment="CENTER">
             <Label text="Map width "/>
-            <TextField fx:id="mapWidthField" maxWidth="50"/>
+            <TextField fx:id="mapWidthField" maxWidth="50" promptText="30"/>
         </HBox>
 
         <HBox alignment="CENTER">
             <Label text="Map height "/>
-            <TextField fx:id="mapHeightField" maxWidth="50"/>
+            <TextField fx:id="mapHeightField" maxWidth="50" promptText="30"/>
         </HBox>
 
         <HBox alignment="CENTER">
             <Label text="Initial grass count "/>
-            <TextField fx:id="grassCountField" maxWidth="50"/>
+            <TextField fx:id="grassCountField" maxWidth="50" promptText="20"/>
         </HBox>
 
         <HBox alignment="CENTER">
             <Label text="Grass energy bonus "/>
-            <TextField fx:id="grassEnergyField" maxWidth="50"/>
+            <TextField fx:id="grassEnergyField" maxWidth="50" promptText="10"/>
         </HBox>
 
         <HBox alignment="CENTER">
             <Label text="New grass growth per day "/>
-            <TextField fx:id="grassGrowthField" maxWidth="50"/>
+            <TextField fx:id="grassGrowthField" maxWidth="50" promptText="5"/>
         </HBox>
 
         <HBox alignment="CENTER">
@@ -63,37 +63,38 @@
         </HBox>
 
 
+
         <Label/>
         <Label text="Animal properties" style="-fx-font-weight: bold"/>
 
         <HBox alignment="CENTER">
             <Label text="Initial animal count "/>
-            <TextField fx:id="animalCountField" maxWidth="50"/>
+            <TextField fx:id="animalCountField" maxWidth="50" promptText="20"/>
         </HBox>
 
         <HBox alignment="CENTER">
             <Label text="Initial animal energy "/>
-            <TextField fx:id="animalEnergyField" maxWidth="50"/>
+            <TextField fx:id="animalEnergyField" maxWidth="50" promptText="30"/>
         </HBox>
 
         <HBox alignment="CENTER">
-            <Label text="Energy required for satiety "/>
-            <TextField fx:id="animalSatietyField" maxWidth="50"/>
+            <Label text="Minimum energy for satiety "/>
+            <TextField fx:id="animalSatietyField" maxWidth="50" promptText="50"/>
         </HBox>
 
         <HBox alignment="CENTER">
-            <Label text="Breeding energy cost "/>
-            <TextField fx:id="animalBreedingEnergyField" maxWidth="50"/>
+            <Label text="Energy required for breeding "/>
+            <TextField fx:id="animalBreedingEnergyField" maxWidth="50" promptText="50"/>
         </HBox>
 
         <HBox alignment="CENTER">
             <Label text="Minimum mutations "/>
-            <TextField fx:id="mutationMinField" maxWidth="50"/>
+            <TextField fx:id="mutationMinField" maxWidth="50" promptText="0"/>
         </HBox>
 
         <HBox alignment="CENTER">
             <Label text="Maximum mutations "/>
-            <TextField fx:id="mutationMaxField" maxWidth="50"/>
+            <TextField fx:id="mutationMaxField" maxWidth="50" promptText="10"/>
         </HBox>
 
         <HBox alignment="CENTER">
@@ -116,8 +117,9 @@
 
         <HBox alignment="CENTER">
             <Label text="Genome length "/>
-            <TextField fx:id="genomeLengthField" maxWidth="50"/>
+            <TextField fx:id="genomeLengthField" maxWidth="50" promptText="10"/>
         </HBox>
+
 
 
         <Label/>
@@ -149,12 +151,6 @@
                 </cursor>
             </Button>
         </HBox>
-
-        <HBox alignment="CENTER">
-            <Label text="Sleep time [ms] "/>
-            <TextField fx:id="sleepTimeField" maxWidth="50"/>
-        </HBox>
-
 
         <Label/>
         <Button onAction="#runSimulation" text="Run simulation">

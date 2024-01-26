@@ -1,21 +1,14 @@
 package simulation;
 
-import javafx.application.Platform;
-import javafx.scene.control.Button;
 import model.*;
 import util.RandomGenerator;
 import util.WorldSettings;
 
-import java.util.Arrays;
-import java.util.concurrent.ThreadLocalRandom;
-
 public class Simulation implements Runnable {
+//    private final List<Animal> animals = new ArrayList<>();
     private final WorldMap map;
     private final WorldSettings settings;
     private final RandomGenerator generator = new RandomGenerator();
-    public int day = 1;
-    private final SimulationController controller;
-    private boolean running = true;
 
     int[] genGenome(int length) {
         int[] genome = new int[length];
@@ -24,14 +17,13 @@ public class Simulation implements Runnable {
         return genome;
     }
 
-    public Simulation(WorldMap map, WorldSettings settings, SimulationController controller) {
+    public Simulation(WorldMap map, WorldSettings settings) {
         this.map = map;
         this.settings = settings;
-        this.controller = controller;
 
         for (int i=0; i<settings.animalCount(); i++) {
             Animal animal = new Animal(generator.genVector(map.getCurrentBonds().start(), map.getCurrentBonds().koniec()),
-                    Arrays.asList(MapDirection.values()).get(ThreadLocalRandom.current().nextInt(0, 8)),
+                    MapDirection.NORTH,
                     null,
                     null,
                     map.counter(),
@@ -43,17 +35,13 @@ public class Simulation implements Runnable {
 
     @Override
     public void run() {
-        while (running) {
-            controller.setDay(day++);
-            map.removeQueued();
-            map.addQueued();
-            map.sunrise();
-        }
-    }
-
-    public void pause(Button pauseButton) {
-        running = !running;
-        Platform.runLater(() -> pauseButton.setText(running? "Pause": "Resume"));
-        run();
+//        int n = animals.size();
+//        for (int i=0; i<directions.size(); i++) {
+//            Animal animal = animals.get(i%n);
+//            map.move(animal, directions.get(i));
+//            try {
+//                Thread.sleep(333);
+//            } catch (InterruptedException ignore) {}
+//        }
     }
 }

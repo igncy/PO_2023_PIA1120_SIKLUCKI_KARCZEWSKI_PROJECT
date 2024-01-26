@@ -35,7 +35,6 @@ public class AppController {
     @FXML private TextField mutationMinField;
     @FXML private TextField mutationMaxField;
     @FXML private TextField genomeLengthField;
-    @FXML private TextField sleepTimeField;
 
     @FXML private ComboBox<String> grassSelect;
     @FXML private ComboBox<String> mutationSelect;
@@ -48,7 +47,7 @@ public class AppController {
     private int mutationType = 0;
     private int config = 0;
 
-    private final ExecutorService executorService = Executors.newCachedThreadPool();
+    private final ExecutorService executorService = Executors.newFixedThreadPool(4);
     private int simulationCount = 1;
     private final Gson gson = new Gson();
     private final String configPath = getClass().getClassLoader().getResource("config").getPath();
@@ -66,7 +65,6 @@ public class AppController {
     private InputField mutationMinInput;
     private InputField mutationMaxInput;
     private InputField genomeLengthInput;
-    private InputField sleepTimeInput;
 
     @FXML
     public void initialize() {
@@ -82,7 +80,6 @@ public class AppController {
         mutationMinInput = new InputField(mutationMinField, 0);
         mutationMaxInput = new InputField(mutationMaxField, 10);
         genomeLengthInput = new InputField(genomeLengthField, 10);
-        sleepTimeInput = new InputField(sleepTimeField, 25);
 
         inputFields.add(mapWidthInput);
         inputFields.add(mapHeightInput);
@@ -96,7 +93,6 @@ public class AppController {
         inputFields.add(mutationMinInput);
         inputFields.add(mutationMaxInput);
         inputFields.add(genomeLengthInput);
-        inputFields.add(sleepTimeInput);
 
         for (InputField obj: inputFields) {
             obj.getField().textProperty().addListener((observable, oldValue, newValue) -> {
@@ -115,7 +111,7 @@ public class AppController {
 
         File[] files = new File(configPath).listFiles();
         for (File file: files) {
-            if (!file.getName().equals("default.json") && file.getName().matches(".*\\.json"))
+            if (!file.getName().equals("default.json"))
                 updateConfigSelect(file.getName().replaceFirst(".json", ""));
         }
     }
@@ -125,10 +121,13 @@ public class AppController {
         log(mutationSelect.getValue());
         log(configSelect.getValue());
         WorldSettings settings = loadConfig();
-        WorldMap map = new GrassField(simulationCount, settings);
-        WorldStats stats = new WorldStats(map);
-        SimulationController controller = new SimulationController(settings, map, stats);
+
+        WorldMap map = new GrassField(10, settings);
+        SimulationController controller = new SimulationController(settings);
         map.addObserver(controller);
+        controller.setWorldMap(map);
+        WorldStats stats = new WorldStats(map);
+        controller.setStats(stats);
 
         Stage stage = new Stage();
         FXMLLoader loader = new FXMLLoader();
@@ -141,18 +140,12 @@ public class AppController {
         stage.setTitle("Simulation #" + simulationCount);
         stage.minWidthProperty().bind(viewRoot.minWidthProperty());
         stage.minHeightProperty().bind(viewRoot.minHeightProperty());
-        stage.setOnHiding(event -> closeSimulation(controller, simulationCount));
         stage.show();
 
-        Simulation simulation = new Simulation(map, settings, controller);
-        controller.setSimulation(simulation);
+        Simulation simulation = new Simulation(map, settings);
         executorService.submit(simulation);
         log("simulation #" + simulationCount++ + " started");
-    }
-
-    private void closeSimulation(SimulationController controller, int id) {
-        log("simulation #" + id + "closed");
-        controller.stop();
+        controller.drawMap("");
     }
 
     private WorldSettings getConfig() {
@@ -170,8 +163,7 @@ public class AppController {
                 mutationType,
                 mutationMinInput.getValue(),
                 mutationMaxInput.getValue(),
-                genomeLengthInput.getValue(),
-                sleepTimeInput.getValue()
+                genomeLengthInput.getValue()
         );
     }
 
@@ -219,6 +211,7 @@ public class AppController {
                 data.append(reader.nextLine());
             }
             reader.close();
+            System.out.println(data);
             return gson.fromJson(data.toString(), WorldSettings.class);
         } catch (FileNotFoundException e) {
             log("error while loading config");
@@ -227,7 +220,6 @@ public class AppController {
     }
 
     private void updateConfigSelect(String value) {
-        value = value.replaceAll(";", ":");
         if (!configSelect.getItems().contains(value))
             configSelect.getItems().add(value);
     }
