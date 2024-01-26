@@ -3,10 +3,7 @@ package model;
 import util.MapChangeListener;
 import util.WorldSettings;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class AbstractWorldMap implements WorldMap {
@@ -14,7 +11,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     protected HashMap<Vector2d, List<Animal>> animals = new HashMap<>();
     protected HashMap<Vector2d, Grass> grass = new HashMap<>();
 
-    protected List<Animal> dead;
+    protected List<Animal> dead = new ArrayList<>();
 
     private int ID;
     protected final WorldSettings settings;
@@ -42,25 +39,6 @@ public abstract class AbstractWorldMap implements WorldMap {
     public WorldSettings getSettings() {
         return settings;
     }
-
-//    public void actualize_bonds(int x1, int y1){
-//        Boundary act_border = getCurrentBounds();
-//        int xp = act_border.lowerLeft().getX(); int yp = act_border.lowerLeft().getY();
-//        int xk = act_border.upperRight().getX(); int yk = act_border.upperRight().getY();
-//        if(x1 < xp) {
-//            xp = x1;
-//        }
-//        if(x1 > xk){
-//            xk = x1;
-//        }
-//        if(y1 < yp){
-//            yp = y1;
-//        }
-//        if(y1 > yk){
-//            yk = y1;
-//        }
-//        this.setBonds(new Boundary(new Vector2d(xp, yp), new Vector2d(xk, yk)));
-//    }
 
     public void place(Animal stwor) {
 
@@ -94,7 +72,7 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     public int[] generate_genom(Animal par1, Animal par2){
 
-        int genomLen = 104; //przykładowe dane, będziemy brać z ustawień symualacji
+        int genomLen = settings.genomeLength();
 
         int E1 = par1.getEnergy(); int E2 = par2.getEnergy();
         float percent = (float) E1/(E1 + E2);
@@ -134,7 +112,7 @@ public abstract class AbstractWorldMap implements WorldMap {
 
         for (int i = 0; i < group.size(); i++){
             Animal temp = group.get(i);
-            MapDirection dir = MapDirection.NORTH;
+            MapDirection dir = Arrays.asList(MapDirection.values()).get(ThreadLocalRandom.current().nextInt(0, 8));
 
             int[] child_genom = generate_genom(act, temp);
 
@@ -271,5 +249,9 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     public int counter() {
         return counter++;
+    }
+
+    public List<Animal> getDead() {
+        return dead;
     }
 }

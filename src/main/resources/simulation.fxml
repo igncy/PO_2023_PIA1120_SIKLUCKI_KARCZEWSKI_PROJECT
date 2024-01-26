@@ -27,9 +27,34 @@
         <Label text="Simulation statistics" style="-fx-font-weight: bold"/>
         <Label/>
 
-        <HBox alignment="CENTER">
+        <HBox alignment="CENTER_LEFT">
             <Label text="Animal count: "/>
             <Label fx:id="animalCountLabel"/>
+        </HBox>
+
+        <HBox alignment="CENTER_LEFT">
+            <Label text="Grass count: "/>
+            <Label fx:id="grassCountLabel"/>
+        </HBox>
+
+        <HBox alignment="CENTER_LEFT">
+            <Label text="Empty tiles: "/>
+            <Label fx:id="emptyTilesLabel"/>
+        </HBox>
+
+        <HBox alignment="CENTER_LEFT">
+            <Label text="Average energy: "/>
+            <Label fx:id="avgEnergyLabel"/>
+        </HBox>
+
+        <HBox alignment="CENTER_LEFT">
+            <Label text="Average lifespan: "/>
+            <Label fx:id="avgLifespanLabel"/>
+        </HBox>
+
+        <HBox alignment="CENTER_LEFT">
+            <Label text="Average child count: "/>
+            <Label fx:id="avgChildCountLabel"/>
         </HBox>
 
         <Label/>

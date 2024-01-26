@@ -113,7 +113,7 @@ public class Animal implements WorldElement {
             case BACKWARD -> position = position.subtract(this.direction.toUnitVector());
         }
         int option = validator.canMoveTo(position);
-        int width = validator.getCurrentBonds().koniec().getX() - validator.getCurrentBonds().start().getX();
+        int width = settings.mapWidth();
 
         if (option == 2) {
             this.position = position;
@@ -177,5 +177,9 @@ public class Animal implements WorldElement {
 
     public int getID() {
         return ID;
+    }
+
+    public int getLifespan() {
+        return days_of_life;
     }
 }

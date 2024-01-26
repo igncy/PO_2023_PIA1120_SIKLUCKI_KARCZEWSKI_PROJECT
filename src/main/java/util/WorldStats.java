@@ -29,15 +29,37 @@ public class WorldStats {
         return settings.mapWidth()*settings.mapHeight()-map.getAnimals().size();
     }
 
-    public int avgEnergy() {
-        return 0;
+    public double avgEnergy() {
+        double sum = 0;
+        double count = 0;
+        for (List<Animal> list: map.getAnimals().values()) {
+            for (Animal animal: list) {
+                sum += animal.getEnergy();
+                count++;
+            }
+        }
+        return count!=0 ? sum/count : 0;
     }
 
-    public int avgLifespan() {
-        return 0;
+    public double avgLifespan() {
+        double sum = 0;
+        double count = 0;
+        for (Animal animal: map.getDead()) {
+            sum += animal.getLifespan();
+            count++;
+        }
+        return count!=0 ? sum/count : 0;
     }
 
-    public int avgChildCount() {
-        return 0;
+    public double avgChildCount() {
+        double sum = 0;
+        double count = 0;
+        for (List<Animal> list: map.getAnimals().values()) {
+            for (Animal animal: list) {
+                sum += animal.getChildren_count();
+                count++;
+            }
+        }
+        return count!=0 ? sum/count : 0;
     }
 }

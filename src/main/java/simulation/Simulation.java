@@ -4,6 +4,9 @@ import model.*;
 import util.RandomGenerator;
 import util.WorldSettings;
 
+import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
+
 public class Simulation implements Runnable {
 //    private final List<Animal> animals = new ArrayList<>();
     private final WorldMap map;
@@ -23,7 +26,7 @@ public class Simulation implements Runnable {
 
         for (int i=0; i<settings.animalCount(); i++) {
             Animal animal = new Animal(generator.genVector(map.getCurrentBonds().start(), map.getCurrentBonds().koniec()),
-                    MapDirection.NORTH,
+                    Arrays.asList(MapDirection.values()).get(ThreadLocalRandom.current().nextInt(0, 8)),
                     null,
                     null,
                     map.counter(),
