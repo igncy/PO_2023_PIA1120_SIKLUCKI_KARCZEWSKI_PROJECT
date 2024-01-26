@@ -90,12 +90,11 @@ public abstract class AbstractWorldMap implements WorldMap {
             mapChanged("");
         }
 
-
     }
 
     public int[] generate_genom(Animal par1, Animal par2){
 
-        int genomLen = 104;
+        int genomLen = 104; //przykładowe dane, będziemy brać z ustawień symualacji
 
         int E1 = par1.getEnergy(); int E2 = par2.getEnergy();
         float percent = (float) E1/(E1 + E2);
@@ -126,22 +125,27 @@ public abstract class AbstractWorldMap implements WorldMap {
         return childGenom;
     }
 
-    public void reproduce(Animal nowy, List<Animal> grupa){
+    public void reproduce(Animal act, List<Animal> group){
 
-        Vector2d pos = nowy.getPosition();
+        Vector2d pos = act.getPosition();
 
         int min_energy = 5;
         int lost_energy = 3;
-        for (int i = 0; i < grupa.size(); i++){
-            Animal temp = grupa.get(i);
+
+        for (int i = 0; i < group.size(); i++){
+            Animal temp = group.get(i);
             MapDirection dir = MapDirection.NORTH;
 
-            int[] child_genom = generate_genom(nowy, temp);
+            int[] child_genom = generate_genom(act, temp);
 
-            if(temp.getEnergy() >= min_energy) {
-                Animal child = new Animal(pos, dir, nowy, temp, counter, child_genom);
+            if(temp.getID() != act.getID() && temp.getEnergy() >= min_energy) {
+                Animal child = new Animal(pos, dir, act, temp, counter, child_genom);
+                act.addChild(child);
+                temp.addChild(child);
+                temp.changeEnergy(temp.getEnergy() - lost_energy);
+                act.changeEnergy(temp.getEnergy() - lost_energy);
+                // tutaj być moze trzeba sprawdzić czy po rozmnażaniu któryś z rodziców nie umrze
             }
-
         }
     }
 
@@ -165,14 +169,20 @@ public abstract class AbstractWorldMap implements WorldMap {
                     act.move(MoveDirection.RIGHT, this);
                 }
 
+                int prevX = act.getPosition().getX(); int prevY = act.getPosition().getY();
                 act.move(MoveDirection.FORWARD, this);
+
+                if(act.getPosition().getX() != prevX || act.getPosition().getY() != prevY){
+                    reproduce(act, animals.get(act.getPosition()));
+                }
+
                 Vector2d newpos = act.getPosition();
                 act.changeEnergy(act.getEnergy() - 1);
 
                 if(this.grass.containsKey(newpos)){
                     act.changeEnergy(act.getEnergy() + energyBoost);
-                    Grass plant = grass.get(newpos);
-                    plant.setActive(false);
+                    Grass plant = this.grass.get(newpos);
+                    this.grass.remove(plant); //te 2 linijki można zawrzeć w 1 linijce ale wyciągnięcie plant mogłoby się przydać
                 }
                 else {
                     if(act.getEnergy() == 0){
@@ -186,10 +196,10 @@ public abstract class AbstractWorldMap implements WorldMap {
                         }
                     }
                 }
-
-
+                if(act.getAlive()){
+                    act.increaseDays();
+                }
             }
-            grass.remove(grass.get(key));
         }
 
     }
@@ -236,9 +246,16 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     @Override
-    public boolean canMoveTo(Vector2d position) {
-        int x = position.getX();
-        return (x >= this.bonds.lowerLeft().getX() && x <= this.bonds.upperRight().getX());
+    public int canMoveTo(Vector2d position) {
+        int x = position.getX(); int y = position.getY();
+        int x_min = this.bonds.start().getX(); int x_max = this.bonds.koniec().getX();
+        boolean valid = (y >= this.bonds.start().getY() && y <= this.bonds.koniec().getY());
+        if(!valid) { return 0; } //
+        else{
+            if(x < x_min){ return -1; } // lewy brzeg
+            else if(x > x_max) { return 1; } // prawy brzeg
+            else{ return 2; } // brak ograniczeń
+        }
     }
 
     public void addObserver(MapChangeListener observer) {
