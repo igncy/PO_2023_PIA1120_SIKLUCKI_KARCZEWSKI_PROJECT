@@ -8,10 +8,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class AbstractWorldMap implements WorldMap {
     private Boundary bonds;
-    protected HashMap<Vector2d, List<Animal>> animals = new HashMap<>();
+    protected HashMap<Vector2d, ArrayList<Animal>> animals = new HashMap<>();
     protected HashMap<Vector2d, Grass> grass = new HashMap<>();
 
-    protected List<Animal> dead = new ArrayList<>();
+    protected ArrayList<Animal> dead = new ArrayList<>();
 
     private int ID;
     protected final WorldSettings settings;
@@ -60,11 +60,11 @@ public abstract class AbstractWorldMap implements WorldMap {
         */
 
         if(animals.containsKey(val)){
-            List<Animal> lista = animals.get(val);
+            ArrayList<Animal> lista = animals.get(val);
             lista.add(stwor);
         }
         else{
-            animals.put(val, List.of(stwor));
+            animals.put(val, new ArrayList<>(Arrays.asList(stwor)));
         }
         mapChanged("");
     }
@@ -132,7 +132,7 @@ public abstract class AbstractWorldMap implements WorldMap {
         int genomLen = settings.genomeLength();
         int energyBoost = settings.grassEnergy();
 
-        for (Map.Entry<Vector2d, List<Animal>> entry: this.animals.entrySet()) {
+        for (Map.Entry<Vector2d, ArrayList<Animal>> entry: this.animals.entrySet()) {
             List <Animal> lista = entry.getValue();
             Vector2d key = entry.getKey();
 
@@ -152,7 +152,7 @@ public abstract class AbstractWorldMap implements WorldMap {
 
                 mapChanged("");
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(50);
                 } catch (InterruptedException ignore) {}
 
                 if(act.getPosition().getX() != prevX || act.getPosition().getY() != prevY){
@@ -211,7 +211,7 @@ public abstract class AbstractWorldMap implements WorldMap {
         return (animals.containsKey(position));
     }
 
-    public HashMap<Vector2d, List<Animal> > getAnimals() {
+    public HashMap<Vector2d, ArrayList<Animal>> getAnimals() {
         return animals;
     }
 
@@ -256,7 +256,7 @@ public abstract class AbstractWorldMap implements WorldMap {
         return counter++;
     }
 
-    public List<Animal> getDead() {
+    public ArrayList<Animal> getDead() {
         return dead;
     }
 }

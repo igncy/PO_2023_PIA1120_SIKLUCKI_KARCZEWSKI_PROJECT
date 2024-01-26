@@ -3,6 +3,7 @@ package model;
 import util.MapChangeListener;
 import util.WorldSettings;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -48,7 +49,7 @@ public interface WorldMap extends MoveValidator {
     public String toString();
     public int getID();
     public HashMap<Vector2d, Grass> getGrass();
-    public HashMap<Vector2d, List<Animal>> getAnimals();
+    public HashMap<Vector2d, ArrayList<Animal>> getAnimals();
     public WorldSettings getSettings();
 
     public void place(Animal stwor);
@@ -58,6 +59,6 @@ public interface WorldMap extends MoveValidator {
     void removeObserver(MapChangeListener observer);
 
     public int counter();
-    public List<Animal> getDead();
+    public ArrayList<Animal> getDead();
     public void sunrise();
 }
