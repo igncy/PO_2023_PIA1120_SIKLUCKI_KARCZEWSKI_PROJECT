@@ -47,10 +47,7 @@ public class Simulation implements Runnable {
             controller.setDay(day++);
             map.removeQueued();
             map.addQueued();
-            System.out.println("b day: " + (day - 1) + ", running: " + running);
-            System.out.println(map.getAnimals());
             map.sunrise();
-            System.out.println("a day: " + (day - 1) + ", running: " + running);
         }
     }
 

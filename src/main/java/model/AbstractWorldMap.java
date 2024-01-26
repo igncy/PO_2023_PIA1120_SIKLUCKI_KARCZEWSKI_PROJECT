@@ -17,6 +17,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     protected final WorldSettings settings;
     protected final ArrayList<MapChangeListener> observers = new ArrayList<>();
     protected final HashMap<Vector2d, Animal> toRemove = new HashMap<>();
+//    protected final ArrayList<Vector2d> toRemoveGrass = new ArrayList<>();
     protected final HashMap<Vector2d, Animal> toAdd = new HashMap<>();
 
     public int counter = 0;
@@ -155,7 +156,7 @@ public abstract class AbstractWorldMap implements WorldMap {
 
                 mapChanged();
                 try {
-                    Thread.sleep(25);
+                    Thread.sleep(settings.sleepTime());
                 } catch (InterruptedException ignore) {}
 
                 if(act.getPosition().getX() != prevX || act.getPosition().getY() != prevY){
@@ -167,8 +168,9 @@ public abstract class AbstractWorldMap implements WorldMap {
 
                 if(this.grass.containsKey(newpos)){
                     act.changeEnergy(act.getEnergy() + energyBoost);
-                    Grass plant = this.grass.get(newpos);
+//                    Grass plant = this.grass.get(newpos);
                     this.grass.remove(newpos); //te 2 linijki można zawrzeć w 1 linijce ale wyciągnięcie plant mogłoby się przydać
+//                    toRemoveGrass.add(newpos);
                 }
                 else {
                     if(act.getEnergy() == 0){
@@ -267,7 +269,11 @@ public abstract class AbstractWorldMap implements WorldMap {
             if (animals.get(pos).size() > 1) animals.get(pos).remove(obj);
             else animals.remove(pos);
         }
+//        for (Vector2d pos: toRemoveGrass) {
+//            grass.remove(pos);
+//        }
         toRemove.clear();
+//        toRemoveGrass.clear();
     }
     public void addQueued() {
         for (Map.Entry<Vector2d, Animal> toRem: toAdd.entrySet()) {
