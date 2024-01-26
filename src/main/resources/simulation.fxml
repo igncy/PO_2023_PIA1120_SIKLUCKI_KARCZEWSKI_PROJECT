@@ -13,8 +13,9 @@
             minHeight="850.0" minWidth="850.0">
 <right>
     <VBox alignment="CENTER">
-        <Label fx:id="infoLabel" text="test" textAlignment="CENTER"/>
-        <Label fx:id="moveInfo"/>
+        <Label fx:id="infoLabel" text="Day 1" textAlignment="CENTER"/>
+        <Label/>
+
         <GridPane fx:id="mapGrid" gridLinesVisible="true" alignment="CENTER" onMouseClicked="#click"/>
         <padding>
             <Insets right="10"/>

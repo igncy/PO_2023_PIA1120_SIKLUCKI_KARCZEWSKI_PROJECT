@@ -2,6 +2,7 @@ package model;
 
 import util.WorldSettings;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Animal implements WorldElement {
@@ -14,7 +15,7 @@ public class Animal implements WorldElement {
     private int days_of_life;
     private Animal parent1;
     private Animal parent2;
-    private List<Animal> children;
+    private List<Animal> children = new ArrayList<>();
 
     private int grassEaten = 0;
     private int daysAlive = 0;

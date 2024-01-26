@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class AppController {
     @FXML private TextField mapWidthField;
@@ -142,10 +143,10 @@ public class AppController {
         stage.minHeightProperty().bind(viewRoot.minHeightProperty());
         stage.show();
 
-        Simulation simulation = new Simulation(map, settings);
+        Simulation simulation = new Simulation(map, settings, controller);
+        controller.setSimulation(simulation);
         executorService.submit(simulation);
         log("simulation #" + simulationCount++ + " started");
-        controller.drawMap("");
     }
 
     private WorldSettings getConfig() {

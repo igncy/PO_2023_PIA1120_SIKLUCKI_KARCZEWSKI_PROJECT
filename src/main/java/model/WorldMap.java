@@ -58,6 +58,6 @@ public interface WorldMap extends MoveValidator {
     void removeObserver(MapChangeListener observer);
 
     public int counter();
-
     public List<Animal> getDead();
+    public void sunrise();
 }

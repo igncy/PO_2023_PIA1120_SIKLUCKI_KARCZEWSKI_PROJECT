@@ -65,9 +65,8 @@ public abstract class AbstractWorldMap implements WorldMap {
         }
         else{
             animals.put(val, List.of(stwor));
-            mapChanged("");
         }
-
+        mapChanged("");
     }
 
     public int[] generate_genom(Animal par1, Animal par2){
@@ -104,6 +103,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     public void reproduce(Animal act, List<Animal> group){
+        if (group == null) return;
 
         Vector2d pos = act.getPosition();
 
@@ -129,8 +129,8 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     public void sunrise(){
 
-        int genomLen = settings.genomeLength(); // to tylko przykładowo podane, tak naprawdę jest to podawane jako parametr symulacji
-        int energyBoost = settings.grassEnergy(); // Również przykładowa dana
+        int genomLen = settings.genomeLength();
+        int energyBoost = settings.grassEnergy();
 
         for (Map.Entry<Vector2d, List<Animal>> entry: this.animals.entrySet()) {
             List <Animal> lista = entry.getValue();
@@ -149,6 +149,11 @@ public abstract class AbstractWorldMap implements WorldMap {
 
                 int prevX = act.getPosition().getX(); int prevY = act.getPosition().getY();
                 act.move(MoveDirection.FORWARD, this);
+
+                mapChanged("");
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ignore) {}
 
                 if(act.getPosition().getX() != prevX || act.getPosition().getY() != prevY){
                     reproduce(act, animals.get(act.getPosition()));
