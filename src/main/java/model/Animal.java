@@ -61,6 +61,7 @@ public class Animal implements WorldElement {
     public void addChild(Animal dziecko){
         this.children.add(dziecko);
         actualizeAncestors(this);
+        this.children_count += 1;
     }
 
     public int[] getGenom() {
@@ -96,7 +97,7 @@ public class Animal implements WorldElement {
         return direction;
     }
 
-    public void move(MoveDirection direction, MoveValidator validator) {
+    public void move(MoveDirection direction, AbstractWorldMap validator) {
         Vector2d position = this.position;
 
         switch (direction) {
@@ -111,8 +112,23 @@ public class Animal implements WorldElement {
             case FORWARD -> position = position.add(this.direction.toUnitVector());
             case BACKWARD -> position = position.subtract(this.direction.toUnitVector());
         }
-        if (validator.canMoveTo(position))
+        int option = validator.canMoveTo(position);
+        int width = validator.getCurrentBonds().koniec().getX() - validator.getCurrentBonds().start().getX();
+
+        if (option == 2) {
             this.position = position;
+        }
+        else if(option == 0){
+            for(int i = 0; i < 4; i++){
+                this.direction = this.direction.next();
+            }
+        }
+        else if(option == -1){
+            this.position = position.add(new Vector2d(width + 1, 0));
+        }
+        else if(option == 1){
+            this.position = position.add(new Vector2d(-width - 1, 0));
+        }
     }
 
     public int getDays_of_life() {
@@ -149,5 +165,17 @@ public class Animal implements WorldElement {
 
     public void setDead(){
         this.alive = false;
+    }
+
+    public void increaseDays(){
+        this.days_of_life += 1;
+    }
+
+    public boolean getAlive(){
+        return alive;
+    }
+
+    public int getID() {
+        return ID;
     }
 }
