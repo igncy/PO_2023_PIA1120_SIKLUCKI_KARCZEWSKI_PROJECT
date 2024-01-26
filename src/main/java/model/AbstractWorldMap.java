@@ -9,17 +9,21 @@ import java.security.SecureRandom;
 
 public abstract class AbstractWorldMap implements WorldMap {
     private Boundary bonds;
-    protected HashMap<Vector2d, List<Animal>> animals = new HashMap<>();
-    protected HashMap<Vector2d, Grass> grass = new HashMap<>();
+    protected final HashMap<Vector2d, ArrayList<Animal>> animals = new HashMap<>();
+    protected final HashMap<Vector2d, Grass> grass = new HashMap<>();
+    protected final ArrayList<Animal> dead = new ArrayList<>();
+    protected final ArrayList<Animal> animalsAlive = new ArrayList<>();
 
     protected List<Animal> dead_animals;
-
     protected List<Grass> Graveyard_list;
     protected TreeSet<Vector2d> Graveyard_set;
 
-    protected int ID;
+    protected final int ID;
+
     protected final WorldSettings settings;
     protected final ArrayList<MapChangeListener> observers = new ArrayList<>();
+    protected final HashMap<Vector2d, Animal> toRemove = new HashMap<>();
+    protected final HashMap<Vector2d, Animal> toAdd = new HashMap<>();
 
     public int counter = 0;
 
@@ -28,7 +32,7 @@ public abstract class AbstractWorldMap implements WorldMap {
         this.ID = ID;
         bonds = new Boundary(
                 new Vector2d(0, 0),
-                new Vector2d(settings.mapWidth(), settings.mapHeight())
+                new Vector2d(settings.mapWidth()-1, settings.mapHeight()-1)
         );
     }
 
@@ -44,29 +48,9 @@ public abstract class AbstractWorldMap implements WorldMap {
         return settings;
     }
 
-//    public void actualize_bonds(int x1, int y1){
-//        Boundary act_border = getCurrentBounds();
-//        int xp = act_border.lowerLeft().getX(); int yp = act_border.lowerLeft().getY();
-//        int xk = act_border.upperRight().getX(); int yk = act_border.upperRight().getY();
-//        if(x1 < xp) {
-//            xp = x1;
-//        }
-//        if(x1 > xk){
-//            xk = x1;
-//        }
-//        if(y1 < yp){
-//            yp = y1;
-//        }
-//        if(y1 > yk){
-//            yk = y1;
-//        }
-//        this.setBonds(new Boundary(new Vector2d(xp, yp), new Vector2d(xk, yk)));
-//    }
-
     public void place(Animal stwor) {
 
         Vector2d val = stwor.getPosition();
-//        actualize_bonds(val.getX(), val.getY());
 
         /* I wersja
         if(animals.containsKey(val)){
@@ -83,19 +67,19 @@ public abstract class AbstractWorldMap implements WorldMap {
         */
 
         if(animals.containsKey(val)){
-            List<Animal> lista = animals.get(val);
+            ArrayList<Animal> lista = animals.get(val);
             lista.add(stwor);
         }
         else{
-            animals.put(val, List.of(stwor));
-            mapChanged("");
+            animals.put(val, new ArrayList<>(Arrays.asList(stwor)));
         }
 
+        if (!animalsAlive.contains(stwor)) animalsAlive.add(stwor);
     }
 
     public int[] generate_genom(Animal par1, Animal par2){
 
-        int genomLen = 104; //przykładowe dane, będziemy brać z ustawień symualacji
+        int genomLen = settings.genomeLength();
 
         int E1 = par1.getEnergy(); int E2 = par2.getEnergy();
         float percent = (float) E1/(E1 + E2);
@@ -105,13 +89,13 @@ public abstract class AbstractWorldMap implements WorldMap {
 
         if(sideChoice == 1)
         {
-            p1 = 0; k1 = x;
+            p1 = 0; k1 = x-1;
             p2 = x; k2 = genomLen-1;
         }
         else
         {
             p1 = genomLen - x; k1 = genomLen - 1;
-            p2 = 0; k2 = genomLen - x;
+            p2 = 0; k2 = genomLen - x - 1;
         }
 
         int childGenom[] = new int[genomLen];
@@ -127,6 +111,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     public void reproduce(Vector2d pos, List<Animal> group){
+        if (group == null) return;
 
         Animal test = group.get(0);
         test.changeEnergy(-5);
@@ -160,7 +145,7 @@ public abstract class AbstractWorldMap implements WorldMap {
             return;
         }
 
-        MapDirection direction = MapDirection.NORTH;
+        MapDirection direction = Arrays.asList(MapDirection.values()).get(ThreadLocalRandom.current().nextInt(0, 8));
         Animal par1 = test; Animal par2 = test1;
 
         int[] child_genom = generate_genom(par1, par2);
@@ -168,6 +153,7 @@ public abstract class AbstractWorldMap implements WorldMap {
         Animal child = new Animal(pos, direction, par1, par2, counter, child_genom);
         child.changeEnergy(2 * settings.animalBreedingEnergy());
         this.counter += 1;
+        toAdd.put(pos, child);
 
         par1.addChild(child);
         par2.addChild(child);
@@ -179,11 +165,11 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     public void sunrise(){
 
-        int genomLen = settings.genomeLength(); // to tylko przykładowo podane, tak naprawdę jest to podawane jako parametr symulacji
-        int energyBoost = settings.grassEnergy(); // Również przykładowa dana
+        int genomLen = settings.genomeLength();
+        int energyBoost = settings.grassEnergy();
 
-        for (Map.Entry<Vector2d, List<Animal>> entry: this.animals.entrySet()) {
-            List <Animal> lista = entry.getValue();
+        for (Map.Entry<Vector2d, ArrayList<Animal>> entry: this.animals.entrySet()) {
+            ArrayList<Animal> lista = entry.getValue();
             Vector2d key = entry.getKey();
 
             for (int i = 0; i < lista.size(); i++) {
@@ -200,15 +186,20 @@ public abstract class AbstractWorldMap implements WorldMap {
                 int prevX = act.getPosition().getX(); int prevY = act.getPosition().getY();
                 act.move(MoveDirection.FORWARD, this);
 
+                mapChanged();
+                try {
+                    Thread.sleep(settings.sleepTime());
+                } catch (InterruptedException ignore) {}
 
                 Vector2d newpos = act.getPosition();
                 act.changeEnergy(act.getEnergy() - 1);
 
                 if(this.grass.containsKey(newpos)){
                     act.changeEnergy(act.getEnergy() + energyBoost);
+
                     Grass plant = this.grass.get(newpos);
                     plant.setActive(false);
-                    this.grass.remove(plant);
+                    this.grass.remove(newpos);
                 }
                 else {
                     if(act.getEnergy() == 0){
@@ -222,26 +213,24 @@ public abstract class AbstractWorldMap implements WorldMap {
                             this.Graveyard_set.add(pos);
                             this.Graveyard_list.add(new Grass(pos, true));
                         }
-                        if(lista.size() == 1){
-                            animals.remove(key);
-                        }
-                        else{
-                            lista.remove(i);
-                        }
+
+                        this.dead.add(act);
+                        toRemove.put(key, act);
                     }
                 }
                 if(act.getAlive()){
                     act.increaseDays();
                 }
+            }
 
-                for (Map.Entry<Vector2d, List<Animal>> el: this.animals.entrySet()){
-                    List<Animal> group = el.getValue();
-                    Vector2d act_pos = el.getKey();
-                    if(group.size() > 1){
-                        reproduce(act_pos, group);
-                    }
+            for (Map.Entry<Vector2d, List<Animal>> el: this.animals.entrySet()){
+                List<Animal> group = el.getValue();
+                Vector2d act_pos = el.getKey();
+                if(group.size() > 1){
+                    reproduce(act_pos, group);
                 }
             }
+
         }
 
     }
@@ -270,7 +259,7 @@ public abstract class AbstractWorldMap implements WorldMap {
         return (animals.containsKey(position));
     }
 
-    public HashMap<Vector2d, List<Animal> > getAnimals() {
+    public HashMap<Vector2d, ArrayList<Animal>> getAnimals() {
         return animals;
     }
 
@@ -282,16 +271,12 @@ public abstract class AbstractWorldMap implements WorldMap {
         this.bonds = bonds;
     }
 
-    public String toString(){
-        Boundary limit = getCurrentBonds();
-        return "XD";
-    }
-
     @Override
     public int canMoveTo(Vector2d position) {
         int x = position.getX(); int y = position.getY();
-        int x_min = this.bonds.start().getX(); int x_max = this.bonds.koniec().getX();
-        boolean valid = (y >= this.bonds.start().getY() && y <= this.bonds.koniec().getY());
+        int x_min = this.bonds.start().getX(); int x_max = this.bonds.koniec().getX()-1;
+        boolean valid = (y >= this.bonds.start().getY() && y <= this.bonds.koniec().getY()-1);
+
         if(!valid) { return 0; } //
         else{
             if(x < x_min){ return -1; } // lewy brzeg
@@ -306,12 +291,37 @@ public abstract class AbstractWorldMap implements WorldMap {
     public void removeObserver(MapChangeListener observer) {
         observers.remove(observer);
     }
-    public void mapChanged(String message) {
+    public void mapChanged() {
         for (MapChangeListener observer: observers)
-            observer.mapChanged(this, message);
+            observer.mapChanged(this);
     }
 
     public int counter() {
         return counter++;
+    }
+
+    public ArrayList<Animal> getDead() {
+        return dead;
+    }
+
+    public ArrayList<Animal> getAlive() {
+        return animalsAlive;
+    }
+
+    public void removeQueued() {
+        for (Map.Entry<Vector2d, Animal> toRem: toRemove.entrySet()) {
+            Vector2d pos = toRem.getKey();
+            Animal obj = toRem.getValue();
+            animalsAlive.remove(obj);
+            if (animals.get(pos).size() > 1) animals.get(pos).remove(obj);
+            else animals.remove(pos);
+        }
+        toRemove.clear();
+    }
+    public void addQueued() {
+        for (Map.Entry<Vector2d, Animal> toRem: toAdd.entrySet()) {
+            place(toRem.getValue());
+        }
+        toAdd.clear();
     }
 }

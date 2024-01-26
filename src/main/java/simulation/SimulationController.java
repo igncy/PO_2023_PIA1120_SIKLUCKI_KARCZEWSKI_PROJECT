@@ -5,70 +5,66 @@ import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import model.Animal;
-import model.Boundary;
-import model.WorldElement;
-import model.WorldMap;
+import model.*;
 import util.MapChangeListener;
 import util.WorldSettings;
 import util.WorldStats;
 
-import java.util.List;
-
 public class SimulationController implements MapChangeListener {
     @FXML private Label infoLabel;
     @FXML private GridPane mapGrid;
-    @FXML private Label moveInfo;
     @FXML private Label animalCountLabel;
+    @FXML private Label grassCountLabel;
+    @FXML private Label emptyTilesLabel;
+    @FXML private Label avgEnergyLabel;
+    @FXML private Label avgLifespanLabel;
+    @FXML private Label avgChildCountLabel;
+    @FXML private Button pauseButton;
 
-    private WorldMap map;
-    private int updateCount = 1;
+    private final WorldMap map;
     private final WorldSettings settings;
-    private WorldStats stats;
+    private final WorldStats stats;
+    private Simulation simulation;
 
-    public SimulationController(WorldSettings settings) {
+    public SimulationController(WorldSettings settings, WorldMap map, WorldStats stats) {
         this.settings = settings;
+        this.map = map;
+        this.stats = stats;
     }
 
-    public void drawMap(String message) {
-        infoLabel.setText(String.format("update #%d", updateCount++));
-        moveInfo.setText(message);
+    public void drawMap() {
         clearGrid();
-
         int CELL_WIDTH = 20, CELL_HEIGHT = 20;
-        Boundary boundary = map.getCurrentBonds();
-        int minX = boundary.start().getX();
-        int maxX = boundary.koniec().getX();
-        int maxY = boundary.koniec().getY();
-        int minY = boundary.start().getY();
 
-//        addCell(0, 0, "y\\x");
         mapGrid.getColumnConstraints().add(new ColumnConstraints(CELL_WIDTH));
         mapGrid.getRowConstraints().add(new RowConstraints(CELL_HEIGHT));
-        for (int x=minX; x<=maxX; x++) {
-//            addCell(x-minX+1, 0, String.format("%d", x));
+        for (int x=0; x<settings.mapWidth()-1; x++) {
             mapGrid.getColumnConstraints().add(new ColumnConstraints(CELL_WIDTH));
         }
-        for (int y=maxY; y>=minY; y--) {
-//            addCell(0, maxY-y+1, String.format("%d", y));
+        for (int y=0; y<settings.mapHeight()-1; y++) {
             mapGrid.getRowConstraints().add(new RowConstraints(CELL_HEIGHT));
         }
 
         for (WorldElement element: map.getGrass().values()) {
-            addCell(element.getPosition().getX()-minX+1, maxY-element.getPosition().getY()+1, "___", Color.GREEN);
+            addCell(element.getPosition().getX(), element.getPosition().getY(), "___", Color.GREEN, 1);
         }
-        for (List<Animal> list: map.getAnimals().values()) {
-            if (list.isEmpty()) continue;
-            Animal element = list.get(0);
-            addCell(element.getPosition().getX()-minX+1, maxY-element.getPosition().getY()+1, "_"+element+"_", Color.RED, element.getHealth());
+        for (Animal element: map.getAlive()) {
+            addCell(element.getPosition().getX(), element.getPosition().getY(), "_" + element + "_", Color.RED, element.getHealth());
         }
+    }
 
-
+    private void updateStats() {
         animalCountLabel.setText(String.format("%d", stats.animalCount()));
+        grassCountLabel.setText(String.format("%d", stats.grassCount()));
+        emptyTilesLabel.setText(String.format("%d", stats.emptyTiles()));
+        avgEnergyLabel.setText(String.format("%.1f", stats.avgEnergy()));
+        avgLifespanLabel.setText(String.format("%.1f days", stats.avgLifespan()));
+        avgChildCountLabel.setText(String.format("%.1f", stats.avgChildCount()));
     }
 
     private void clearGrid() {
@@ -77,17 +73,10 @@ public class SimulationController implements MapChangeListener {
         mapGrid.getRowConstraints().clear();
     }
 
-    private void addCell(int x, int y, String stringValue) {
-        Label label = new Label(stringValue);
-        mapGrid.add(label, x, y);
-        GridPane.setHalignment(label, HPos.CENTER);
+    public void setDay(int day) {
+        Platform.runLater(() -> infoLabel.setText("Day " + day));
     }
-    private void addCell(int x, int y, String stringValue, Color color) {
-        Label label = new Label(stringValue);
-        label.setBackground(new Background(new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY)));
-        mapGrid.add(label, x, y);
-        GridPane.setHalignment(label, HPos.CENTER);
-    }
+
     private void addCell(int x, int y, String stringValue, Color color, double opacity) {
         Label label = new Label(stringValue);
         label.setBackground(new Background(new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -96,18 +85,20 @@ public class SimulationController implements MapChangeListener {
         GridPane.setHalignment(label, HPos.CENTER);
     }
 
-        public void setWorldMap(WorldMap map) {
-        this.map = map;
-    }
-
     @Override
-    public void mapChanged(WorldMap worldMap, String message) {
+    public void mapChanged(WorldMap worldMap) {
         Platform.runLater(() -> {
-            drawMap(message);
+            drawMap();
+            updateStats();
         });
     }
 
     public void pause() {
+        simulation.pause(pauseButton);
+    }
+
+    public void stop() {
+        pause();
     }
 
     public void click(MouseEvent event) {
@@ -118,13 +109,13 @@ public class SimulationController implements MapChangeListener {
                 clickedNode = parent;
                 parent = clickedNode.getParent();
             }
-            Integer colIndex = GridPane.getColumnIndex(clickedNode);
-            Integer rowIndex = GridPane.getRowIndex(clickedNode);
-            System.out.println("col: " + colIndex + " row: " + rowIndex);
+            Integer x = GridPane.getColumnIndex(clickedNode);
+            Integer y = GridPane.getRowIndex(clickedNode);
+            System.out.println(map.getAnimals().get(new Vector2d(x, y)));
         }
     }
 
-    public void setStats(WorldStats stats) {
-        this.stats = stats;
+    public void setSimulation(Simulation simulation) {
+        this.simulation = simulation;
     }
 }

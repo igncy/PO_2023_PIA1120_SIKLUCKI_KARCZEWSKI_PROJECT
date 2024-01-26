@@ -3,6 +3,7 @@ package model;
 import util.MapChangeListener;
 import util.WorldSettings;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -45,10 +46,9 @@ public interface WorldMap extends MoveValidator {
      * @return animal or null if the position is not occupied.
      */
     List<Animal> objectAt(Vector2d position);
-    public String toString();
     public int getID();
     public HashMap<Vector2d, Grass> getGrass();
-    public HashMap<Vector2d, List<Animal>> getAnimals();
+    public HashMap<Vector2d, ArrayList<Animal>> getAnimals();
     public WorldSettings getSettings();
 
     public void place(Animal stwor);
@@ -58,4 +58,10 @@ public interface WorldMap extends MoveValidator {
     void removeObserver(MapChangeListener observer);
 
     public int counter();
+    public ArrayList<Animal> getDead();
+    public void sunrise();
+    public ArrayList<Animal> getAlive();
+
+    public void removeQueued();
+    public void addQueued();
 }

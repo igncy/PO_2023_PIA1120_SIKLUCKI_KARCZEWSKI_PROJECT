@@ -11,10 +11,11 @@ public class GrassField extends AbstractWorldMap implements WorldMap {
         super(ID, settings);
         int num = settings.grassCount();
         this.count = num;
-        int j = 0;
-        while (j * j <= num * 10) {
-            j += 1;
-        }
+//        int j = 0;
+//        while (j * j <= num * 10) {
+//            j += 1;
+//        }
+        int j = Math.min(settings.mapWidth(), settings.mapHeight());
         int[][] coord = new int[num][2];
         boolean[][] select = new boolean[j][j];
         int count = 0;
@@ -27,8 +28,6 @@ public class GrassField extends AbstractWorldMap implements WorldMap {
                 coord[count][0] = x;
                 coord[count][1] = y;
                 count += 1;
-//                actualize_bonds(x, y);
-                mapChanged("");
                 Vector2d vec = new Vector2d(x, y);
                 this.grass.put(vec, new Grass(vec, true));
             }
