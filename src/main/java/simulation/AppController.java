@@ -115,7 +115,7 @@ public class AppController {
 
         File[] files = new File(configPath).listFiles();
         for (File file: files) {
-            if (!file.getName().equals("config/default.json") && file.getName().matches(".*\\.json"))
+            if (!file.getName().equals("default.json") && file.getName().matches(".*\\.json"))
                 updateConfigSelect(file.getName().replaceFirst(".json", ""));
         }
     }

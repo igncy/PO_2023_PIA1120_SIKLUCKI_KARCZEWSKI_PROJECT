@@ -21,7 +21,7 @@ public class WorldStats {
     }
 
     public int emptyTiles() {
-        return settings.mapWidth()*settings.mapHeight()-animalCount();
+        return settings.mapWidth()*settings.mapHeight()-map.getAnimals().size()-map.getGrass().size();
     }
 
     public double avgEnergy() {

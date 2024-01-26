@@ -16,7 +16,7 @@
     </VBox>
 </top>
 <center>
-    <VBox fx:id="mainBox" alignment="CENTER">
+    <VBox alignment="CENTER">
         <Label text="World properties" style="-fx-font-weight: bold"/>
 
         <HBox alignment="CENTER">
