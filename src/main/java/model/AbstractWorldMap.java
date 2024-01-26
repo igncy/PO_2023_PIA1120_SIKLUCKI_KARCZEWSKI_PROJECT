@@ -155,7 +155,7 @@ public abstract class AbstractWorldMap implements WorldMap {
 
                 mapChanged();
                 try {
-                    Thread.sleep(25);
+                    Thread.sleep(settings.sleepTime());
                 } catch (InterruptedException ignore) {}
 
                 if(act.getPosition().getX() != prevX || act.getPosition().getY() != prevY){
@@ -167,7 +167,7 @@ public abstract class AbstractWorldMap implements WorldMap {
 
                 if(this.grass.containsKey(newpos)){
                     act.changeEnergy(act.getEnergy() + energyBoost);
-                    Grass plant = this.grass.get(newpos);
+//                    Grass plant = this.grass.get(newpos);
                     this.grass.remove(newpos); //te 2 linijki można zawrzeć w 1 linijce ale wyciągnięcie plant mogłoby się przydać
                 }
                 else {

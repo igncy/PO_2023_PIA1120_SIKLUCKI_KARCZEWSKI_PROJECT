@@ -63,7 +63,6 @@
         </HBox>
 
 
-
         <Label/>
         <Label text="Animal properties" style="-fx-font-weight: bold"/>
 
@@ -78,12 +77,12 @@
         </HBox>
 
         <HBox alignment="CENTER">
-            <Label text="Minimum energy for satiety "/>
+            <Label text="Energy required for satiety "/>
             <TextField fx:id="animalSatietyField" maxWidth="50"/>
         </HBox>
 
         <HBox alignment="CENTER">
-            <Label text="Energy required for breeding "/>
+            <Label text="Breeding energy cost "/>
             <TextField fx:id="animalBreedingEnergyField" maxWidth="50"/>
         </HBox>
 
@@ -121,7 +120,6 @@
         </HBox>
 
 
-
         <Label/>
         <Label text="Configuration" style="-fx-font-weight: bold"/>
 
@@ -151,6 +149,12 @@
                 </cursor>
             </Button>
         </HBox>
+
+        <HBox alignment="CENTER">
+            <Label text="Sleep time [ms] "/>
+            <TextField fx:id="sleepTimeField" maxWidth="50"/>
+        </HBox>
+
 
         <Label/>
         <Button onAction="#runSimulation" text="Run simulation">

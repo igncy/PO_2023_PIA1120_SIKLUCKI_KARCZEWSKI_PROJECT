@@ -54,7 +54,6 @@ public class SimulationController implements MapChangeListener {
             addCell(element.getPosition().getX(), element.getPosition().getY(), "___", Color.GREEN, 1);
         }
         for (Animal element: map.getAlive()) {
-            System.out.println(element.getPosition());
             addCell(element.getPosition().getX(), element.getPosition().getY(), "_" + element + "_", Color.RED, element.getHealth());
         }
     }

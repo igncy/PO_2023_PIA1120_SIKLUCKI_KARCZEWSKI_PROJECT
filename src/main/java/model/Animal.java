@@ -115,8 +115,6 @@ public class Animal implements WorldElement {
         }
         int option = validator.canMoveTo(position);
         int width = settings.mapWidth();
-        System.out.println(">"+width+" "+option);
-        System.out.println(">>"+this.position+" "+position);
 
         if (option == 2) {
             this.position = position;
