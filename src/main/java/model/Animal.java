@@ -3,6 +3,7 @@ package model;
 import util.WorldSettings;
 
 import java.util.List;
+import java.security.SecureRandom;
 
 public class Animal implements WorldElement {
     private MapDirection direction;
@@ -11,13 +12,12 @@ public class Animal implements WorldElement {
     private int ID;
     private int children_count;
 
+    private boolean plantTombstone = false;
     private int days_of_life;
     private Animal parent1;
     private Animal parent2;
     private List<Animal> children;
-
     private int grassEaten = 0;
-    private int daysAlive = 0;
     private WorldSettings settings;
     private boolean alive = true;
 
@@ -131,6 +131,25 @@ public class Animal implements WorldElement {
         }
     }
 
+    public boolean comp(Animal z2){
+        if(this.energy == z2.energy){
+
+            if(this.days_of_life == z2.days_of_life)
+            {
+                if(this.children_count == z2.children_count){
+
+                    SecureRandom rand = new SecureRandom();
+                    int option = rand.nextInt(2);
+
+                    return (option == 1);
+                }
+                else { return (this.children_count > this.children_count); }
+            }
+            else { return (this.days_of_life > z2.days_of_life); }
+        }
+        else{ return (this.energy > z2.energy); }
+    }
+
     public int getDays_of_life() {
         return days_of_life;
     }
@@ -177,5 +196,13 @@ public class Animal implements WorldElement {
 
     public int getID() {
         return ID;
+    }
+
+    public void setPlantTombstone(){
+        this.plantTombstone = true;
+    }
+
+    public boolean isPlantTombstone() {
+        return plantTombstone;
     }
 }
