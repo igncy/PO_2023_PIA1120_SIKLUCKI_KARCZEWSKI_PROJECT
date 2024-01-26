@@ -14,7 +14,7 @@ import util.MapChangeListener;
 import util.WorldSettings;
 import util.WorldStats;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class SimulationController implements MapChangeListener {
     @FXML private Label infoLabel;
@@ -51,7 +51,7 @@ public class SimulationController implements MapChangeListener {
         for (WorldElement element: map.getGrass().values()) {
             addCell(element.getPosition().getX(), element.getPosition().getY(), "___", Color.GREEN, 1);
         }
-        for (List<Animal> list: map.getAnimals().values()) {
+        for (ArrayList<Animal> list: map.getAnimals().values()) {
             for (Animal element: list) {
                 addCell(element.getPosition().getX(), element.getPosition().getY(), "_" + element + "_", Color.RED, element.getHealth());
             }

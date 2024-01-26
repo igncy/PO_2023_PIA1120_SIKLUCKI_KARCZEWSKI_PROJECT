@@ -3,7 +3,7 @@ package util;
 import model.Animal;
 import model.WorldMap;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class WorldStats {
     private final WorldMap map;
@@ -16,7 +16,7 @@ public class WorldStats {
 
     public int animalCount() {
         int count = 0;
-        for (List<Animal> list: map.getAnimals().values())
+        for (ArrayList<Animal> list: map.getAnimals().values())
             count += list.size();
         return count;
     }
@@ -32,7 +32,7 @@ public class WorldStats {
     public double avgEnergy() {
         double sum = 0;
         double count = 0;
-        for (List<Animal> list: map.getAnimals().values()) {
+        for (ArrayList<Animal> list: map.getAnimals().values()) {
             for (Animal animal: list) {
                 sum += animal.getEnergy();
                 count++;
@@ -54,7 +54,7 @@ public class WorldStats {
     public double avgChildCount() {
         double sum = 0;
         double count = 0;
-        for (List<Animal> list: map.getAnimals().values()) {
+        for (ArrayList<Animal> list: map.getAnimals().values()) {
             for (Animal animal: list) {
                 sum += animal.getChildren_count();
                 count++;

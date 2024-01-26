@@ -117,11 +117,12 @@ public abstract class AbstractWorldMap implements WorldMap {
             int[] child_genom = generate_genom(act, temp);
 
             if(temp.getID() != act.getID() && temp.getEnergy() >= min_energy) {
-                Animal child = new Animal(pos, dir, act, temp, counter, child_genom);
+                Animal child = new Animal(pos, dir, act, temp, counter, child_genom, settings);
                 act.addChild(child);
                 temp.addChild(child);
                 temp.changeEnergy(temp.getEnergy() - lost_energy);
                 act.changeEnergy(temp.getEnergy() - lost_energy);
+                place(child);
                 // tutaj być moze trzeba sprawdzić czy po rozmnażaniu któryś z rodziców nie umrze
             }
         }
@@ -133,7 +134,7 @@ public abstract class AbstractWorldMap implements WorldMap {
         int energyBoost = settings.grassEnergy();
 
         for (Map.Entry<Vector2d, ArrayList<Animal>> entry: this.animals.entrySet()) {
-            List <Animal> lista = entry.getValue();
+            ArrayList<Animal> lista = entry.getValue();
             Vector2d key = entry.getKey();
 
             for (int i = 0; i < lista.size(); i++) {
@@ -152,7 +153,7 @@ public abstract class AbstractWorldMap implements WorldMap {
 
                 mapChanged("");
                 try {
-                    Thread.sleep(50);
+                    Thread.sleep(20);
                 } catch (InterruptedException ignore) {}
 
                 if(act.getPosition().getX() != prevX || act.getPosition().getY() != prevY){
