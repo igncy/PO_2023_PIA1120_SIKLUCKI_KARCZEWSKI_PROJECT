@@ -29,7 +29,7 @@ public class GrassField extends AbstractWorldMap implements WorldMap {
                 coord[count][1] = y;
                 count += 1;
                 Vector2d vec = new Vector2d(x, y);
-                this.grass.put(vec, new Grass(vec, true));
+                this.grass.put(vec, new Grass(vec));
             }
         }
     }
