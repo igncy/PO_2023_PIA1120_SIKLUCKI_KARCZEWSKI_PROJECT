@@ -151,8 +151,8 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     public void sunrise(){
 
-        int genomLen = 10; // to tylko przykładowo podane, tak naprawdę jest to podawane jako parametr symulacji
-        int energyBoost = 3; // Również przykładowa dana
+        int genomLen = settings.genomeLength(); // to tylko przykładowo podane, tak naprawdę jest to podawane jako parametr symulacji
+        int energyBoost = settings.grassEnergy(); // Również przykładowa dana
 
         for (Map.Entry<Vector2d, List<Animal>> entry: this.animals.entrySet()) {
             List <Animal> lista = entry.getValue();
@@ -232,8 +232,7 @@ public abstract class AbstractWorldMap implements WorldMap {
         return animals;
     }
 
-
-    public Boundary getCurrentBounds() {
+    public Boundary getCurrentBonds() {
         return bonds;
     }
 
@@ -242,7 +241,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     public String toString(){
-        Boundary limit = getCurrentBounds();
+        Boundary limit = getCurrentBonds();
         return "XD";
     }
 
@@ -257,7 +256,6 @@ public abstract class AbstractWorldMap implements WorldMap {
             else if(x > x_max) { return 1; } // prawy brzeg
             else{ return 2; } // brak ograniczeń
         }
-
     }
 
     public void addObserver(MapChangeListener observer) {
@@ -269,5 +267,9 @@ public abstract class AbstractWorldMap implements WorldMap {
     public void mapChanged(String message) {
         for (MapChangeListener observer: observers)
             observer.mapChanged(this, message);
+    }
+
+    public int counter() {
+        return counter++;
     }
 }

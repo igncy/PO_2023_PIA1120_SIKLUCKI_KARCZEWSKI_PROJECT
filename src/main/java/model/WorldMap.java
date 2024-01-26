@@ -52,9 +52,10 @@ public interface WorldMap extends MoveValidator {
     public WorldSettings getSettings();
 
     public void place(Animal stwor);
-    public Boundary getCurrentBounds();
+    public Boundary getCurrentBonds();
 
     void addObserver(MapChangeListener observer);
     void removeObserver(MapChangeListener observer);
-}
 
+    public int counter();
+}
