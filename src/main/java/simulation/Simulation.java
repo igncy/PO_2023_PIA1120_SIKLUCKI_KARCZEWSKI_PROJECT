@@ -1,5 +1,7 @@
 package simulation;
 
+import javafx.application.Platform;
+import javafx.scene.control.Button;
 import model.*;
 import util.RandomGenerator;
 import util.WorldSettings;
@@ -42,13 +44,19 @@ public class Simulation implements Runnable {
     @Override
     public void run() {
         while (running) {
+            controller.setDay(day++);
+            map.removeQueued();
+            map.addQueued();
+            System.out.println("b day: " + (day - 1) + ", running: " + running);
+            System.out.println(map.getAnimals());
             map.sunrise();
-            controller.setDay(++day);
+            System.out.println("a day: " + (day - 1) + ", running: " + running);
         }
     }
 
-    public void pause() {
+    public void pause(Button pauseButton) {
         running = !running;
-        if (running) run();
+        Platform.runLater(() -> pauseButton.setText(running? "Pause": "Resume"));
+        run();
     }
 }

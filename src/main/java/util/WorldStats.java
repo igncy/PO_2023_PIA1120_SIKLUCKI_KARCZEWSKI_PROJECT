@@ -3,8 +3,6 @@ package util;
 import model.Animal;
 import model.WorldMap;
 
-import java.util.ArrayList;
-
 public class WorldStats {
     private final WorldMap map;
     private final WorldSettings settings;
@@ -15,10 +13,7 @@ public class WorldStats {
     }
 
     public int animalCount() {
-        int count = 0;
-        for (ArrayList<Animal> list: map.getAnimals().values())
-            count += list.size();
-        return count;
+        return map.getAlive().size();
     }
 
     public int grassCount() {
@@ -26,40 +21,27 @@ public class WorldStats {
     }
 
     public int emptyTiles() {
-        return settings.mapWidth()*settings.mapHeight()-map.getAnimals().size();
+        return settings.mapWidth()*settings.mapHeight()-animalCount();
     }
 
     public double avgEnergy() {
         double sum = 0;
-        double count = 0;
-        for (ArrayList<Animal> list: map.getAnimals().values()) {
-            for (Animal animal: list) {
-                sum += animal.getEnergy();
-                count++;
-            }
-        }
-        return count!=0 ? sum/count : 0;
+        for (Animal animal: map.getAlive())
+            sum += animal.getEnergy();
+        return animalCount()!=0 ? sum/animalCount() : 0;
     }
 
     public double avgLifespan() {
         double sum = 0;
-        double count = 0;
-        for (Animal animal: map.getDead()) {
+        for (Animal animal: map.getDead())
             sum += animal.getLifespan();
-            count++;
-        }
-        return count!=0 ? sum/count : 0;
+        return animalCount()!=0 ? sum/animalCount() : 0;
     }
 
     public double avgChildCount() {
         double sum = 0;
-        double count = 0;
-        for (ArrayList<Animal> list: map.getAnimals().values()) {
-            for (Animal animal: list) {
-                sum += animal.getChildren_count();
-                count++;
-            }
-        }
-        return count!=0 ? sum/count : 0;
+        for (Animal animal: map.getAlive())
+            sum += animal.getChildren_count();
+        return animalCount()!=0 ? sum/animalCount() : 0;
     }
 }

@@ -3,5 +3,5 @@ package util;
 import model.WorldMap;
 
 public interface MapChangeListener {
-    void mapChanged(WorldMap worldMap, String message);
+    void mapChanged(WorldMap worldMap);
 }

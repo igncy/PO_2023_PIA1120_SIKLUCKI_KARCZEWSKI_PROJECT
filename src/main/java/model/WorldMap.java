@@ -46,7 +46,6 @@ public interface WorldMap extends MoveValidator {
      * @return animal or null if the position is not occupied.
      */
     List<Animal> objectAt(Vector2d position);
-    public String toString();
     public int getID();
     public HashMap<Vector2d, Grass> getGrass();
     public HashMap<Vector2d, ArrayList<Animal>> getAnimals();
@@ -61,4 +60,8 @@ public interface WorldMap extends MoveValidator {
     public int counter();
     public ArrayList<Animal> getDead();
     public void sunrise();
+    public ArrayList<Animal> getAlive();
+
+    public void removeQueued();
+    public void addQueued();
 }

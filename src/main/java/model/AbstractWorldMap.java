@@ -8,14 +8,16 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class AbstractWorldMap implements WorldMap {
     private Boundary bonds;
-    protected HashMap<Vector2d, ArrayList<Animal>> animals = new HashMap<>();
-    protected HashMap<Vector2d, Grass> grass = new HashMap<>();
+    protected final HashMap<Vector2d, ArrayList<Animal>> animals = new HashMap<>();
+    protected final HashMap<Vector2d, Grass> grass = new HashMap<>();
+    protected final ArrayList<Animal> dead = new ArrayList<>();
+    protected final ArrayList<Animal> animalsAlive = new ArrayList<>();
 
-    protected ArrayList<Animal> dead = new ArrayList<>();
-
-    private int ID;
+    private final int ID;
     protected final WorldSettings settings;
     protected final ArrayList<MapChangeListener> observers = new ArrayList<>();
+    protected final HashMap<Vector2d, Animal> toRemove = new HashMap<>();
+    protected final HashMap<Vector2d, Animal> toAdd = new HashMap<>();
 
     public int counter = 0;
 
@@ -24,7 +26,7 @@ public abstract class AbstractWorldMap implements WorldMap {
         this.ID = ID;
         bonds = new Boundary(
                 new Vector2d(0, 0),
-                new Vector2d(settings.mapWidth(), settings.mapHeight())
+                new Vector2d(settings.mapWidth()-1, settings.mapHeight()-1)
         );
     }
 
@@ -43,7 +45,6 @@ public abstract class AbstractWorldMap implements WorldMap {
     public void place(Animal stwor) {
 
         Vector2d val = stwor.getPosition();
-//        actualize_bonds(val.getX(), val.getY());
 
         /* I wersja
         if(animals.containsKey(val)){
@@ -66,7 +67,8 @@ public abstract class AbstractWorldMap implements WorldMap {
         else{
             animals.put(val, new ArrayList<>(Arrays.asList(stwor)));
         }
-        mapChanged("");
+
+        if (!animalsAlive.contains(stwor)) animalsAlive.add(stwor);
     }
 
     public int[] generate_genom(Animal par1, Animal par2){
@@ -81,13 +83,13 @@ public abstract class AbstractWorldMap implements WorldMap {
 
         if(sideChoice == 1)
         {
-            p1 = 0; k1 = x;
+            p1 = 0; k1 = x-1;
             p2 = x; k2 = genomLen-1;
         }
         else
         {
             p1 = genomLen - x; k1 = genomLen - 1;
-            p2 = 0; k2 = genomLen - x;
+            p2 = 0; k2 = genomLen - x - 1;
         }
 
         int childGenom[] = new int[genomLen];
@@ -122,7 +124,7 @@ public abstract class AbstractWorldMap implements WorldMap {
                 temp.addChild(child);
                 temp.changeEnergy(temp.getEnergy() - lost_energy);
                 act.changeEnergy(temp.getEnergy() - lost_energy);
-                place(child);
+                toAdd.put(pos, child);
                 // tutaj być moze trzeba sprawdzić czy po rozmnażaniu któryś z rodziców nie umrze
             }
         }
@@ -151,9 +153,9 @@ public abstract class AbstractWorldMap implements WorldMap {
                 int prevX = act.getPosition().getX(); int prevY = act.getPosition().getY();
                 act.move(MoveDirection.FORWARD, this);
 
-                mapChanged("");
+                mapChanged();
                 try {
-                    Thread.sleep(20);
+                    Thread.sleep(25);
                 } catch (InterruptedException ignore) {}
 
                 if(act.getPosition().getX() != prevX || act.getPosition().getY() != prevY){
@@ -166,24 +168,20 @@ public abstract class AbstractWorldMap implements WorldMap {
                 if(this.grass.containsKey(newpos)){
                     act.changeEnergy(act.getEnergy() + energyBoost);
                     Grass plant = this.grass.get(newpos);
-                    this.grass.remove(plant); //te 2 linijki można zawrzeć w 1 linijce ale wyciągnięcie plant mogłoby się przydać
+                    this.grass.remove(newpos); //te 2 linijki można zawrzeć w 1 linijce ale wyciągnięcie plant mogłoby się przydać
                 }
                 else {
                     if(act.getEnergy() == 0){
                         act.setDead();
                         this.dead.add(act);
-                        if(lista.size() == 1){
-                            animals.remove(key);
-                        }
-                        else{
-                            lista.remove(i);
-                        }
+                        toRemove.put(key, act);
                     }
                 }
                 if(act.getAlive()){
                     act.increaseDays();
                 }
             }
+
         }
 
     }
@@ -224,16 +222,12 @@ public abstract class AbstractWorldMap implements WorldMap {
         this.bonds = bonds;
     }
 
-    public String toString(){
-        Boundary limit = getCurrentBonds();
-        return "XD";
-    }
-
     @Override
     public int canMoveTo(Vector2d position) {
         int x = position.getX(); int y = position.getY();
-        int x_min = this.bonds.start().getX(); int x_max = this.bonds.koniec().getX();
-        boolean valid = (y >= this.bonds.start().getY() && y <= this.bonds.koniec().getY());
+        int x_min = this.bonds.start().getX(); int x_max = this.bonds.koniec().getX()-1;
+        boolean valid = (y >= this.bonds.start().getY() && y <= this.bonds.koniec().getY()-1);
+
         if(!valid) { return 0; } //
         else{
             if(x < x_min){ return -1; } // lewy brzeg
@@ -248,9 +242,9 @@ public abstract class AbstractWorldMap implements WorldMap {
     public void removeObserver(MapChangeListener observer) {
         observers.remove(observer);
     }
-    public void mapChanged(String message) {
+    public void mapChanged() {
         for (MapChangeListener observer: observers)
-            observer.mapChanged(this, message);
+            observer.mapChanged(this);
     }
 
     public int counter() {
@@ -259,5 +253,26 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     public ArrayList<Animal> getDead() {
         return dead;
+    }
+
+    public ArrayList<Animal> getAlive() {
+        return animalsAlive;
+    }
+
+    public void removeQueued() {
+        for (Map.Entry<Vector2d, Animal> toRem: toRemove.entrySet()) {
+            Vector2d pos = toRem.getKey();
+            Animal obj = toRem.getValue();
+            animalsAlive.remove(obj);
+            if (animals.get(pos).size() > 1) animals.get(pos).remove(obj);
+            else animals.remove(pos);
+        }
+        toRemove.clear();
+    }
+    public void addQueued() {
+        for (Map.Entry<Vector2d, Animal> toRem: toAdd.entrySet()) {
+            place(toRem.getValue());
+        }
+        toAdd.clear();
     }
 }

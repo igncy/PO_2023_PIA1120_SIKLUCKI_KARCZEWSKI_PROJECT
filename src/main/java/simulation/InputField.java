@@ -9,6 +9,7 @@ public class InputField {
     public InputField(TextField field, int defaultValue) {
         this.field = field;
         this.defaultValue = defaultValue;
+        field.setPromptText(String.format("%d", defaultValue));
     }
 
     public int getValue() {

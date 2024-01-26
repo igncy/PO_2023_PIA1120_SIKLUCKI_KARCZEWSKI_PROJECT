@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -13,8 +14,6 @@ import model.*;
 import util.MapChangeListener;
 import util.WorldSettings;
 import util.WorldStats;
-
-import java.util.ArrayList;
 
 public class SimulationController implements MapChangeListener {
     @FXML private Label infoLabel;
@@ -25,14 +24,17 @@ public class SimulationController implements MapChangeListener {
     @FXML private Label avgEnergyLabel;
     @FXML private Label avgLifespanLabel;
     @FXML private Label avgChildCountLabel;
+    @FXML private Button pauseButton;
 
-    private WorldMap map;
+    private final WorldMap map;
     private final WorldSettings settings;
-    private WorldStats stats;
+    private final WorldStats stats;
     private Simulation simulation;
 
-    public SimulationController(WorldSettings settings) {
+    public SimulationController(WorldSettings settings, WorldMap map, WorldStats stats) {
         this.settings = settings;
+        this.map = map;
+        this.stats = stats;
     }
 
     public void drawMap() {
@@ -41,20 +43,19 @@ public class SimulationController implements MapChangeListener {
 
         mapGrid.getColumnConstraints().add(new ColumnConstraints(CELL_WIDTH));
         mapGrid.getRowConstraints().add(new RowConstraints(CELL_HEIGHT));
-        for (int x=0; x<settings.mapWidth(); x++) {
+        for (int x=0; x<settings.mapWidth()-1; x++) {
             mapGrid.getColumnConstraints().add(new ColumnConstraints(CELL_WIDTH));
         }
-        for (int y=0; y<settings.mapHeight(); y++) {
+        for (int y=0; y<settings.mapHeight()-1; y++) {
             mapGrid.getRowConstraints().add(new RowConstraints(CELL_HEIGHT));
         }
 
         for (WorldElement element: map.getGrass().values()) {
             addCell(element.getPosition().getX(), element.getPosition().getY(), "___", Color.GREEN, 1);
         }
-        for (ArrayList<Animal> list: map.getAnimals().values()) {
-            for (Animal element: list) {
-                addCell(element.getPosition().getX(), element.getPosition().getY(), "_" + element + "_", Color.RED, element.getHealth());
-            }
+        for (Animal element: map.getAlive()) {
+            System.out.println(element.getPosition());
+            addCell(element.getPosition().getX(), element.getPosition().getY(), "_" + element + "_", Color.RED, element.getHealth());
         }
     }
 
@@ -74,9 +75,7 @@ public class SimulationController implements MapChangeListener {
     }
 
     public void setDay(int day) {
-        Platform.runLater(() -> {
-            infoLabel.setText("Day " + day);
-        });
+        Platform.runLater(() -> infoLabel.setText("Day " + day));
     }
 
     private void addCell(int x, int y, String stringValue, Color color, double opacity) {
@@ -88,7 +87,7 @@ public class SimulationController implements MapChangeListener {
     }
 
     @Override
-    public void mapChanged(WorldMap worldMap, String message) {
+    public void mapChanged(WorldMap worldMap) {
         Platform.runLater(() -> {
             drawMap();
             updateStats();
@@ -96,7 +95,11 @@ public class SimulationController implements MapChangeListener {
     }
 
     public void pause() {
-        simulation.pause();
+        simulation.pause(pauseButton);
+    }
+
+    public void stop() {
+        pause();
     }
 
     public void click(MouseEvent event) {
@@ -111,14 +114,6 @@ public class SimulationController implements MapChangeListener {
             Integer y = GridPane.getRowIndex(clickedNode);
             System.out.println(map.getAnimals().get(new Vector2d(x, y)));
         }
-    }
-
-    public void setWorldMap(WorldMap map) {
-        this.map = map;
-    }
-
-    public void setStats(WorldStats stats) {
-        this.stats = stats;
     }
 
     public void setSimulation(Simulation simulation) {
