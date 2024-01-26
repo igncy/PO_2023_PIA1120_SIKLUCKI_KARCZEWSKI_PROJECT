@@ -3,8 +3,6 @@ package util;
 import model.Animal;
 import model.WorldMap;
 
-import java.util.List;
-
 public class WorldStats {
     private final WorldMap map;
     private final WorldSettings settings;
@@ -15,10 +13,7 @@ public class WorldStats {
     }
 
     public int animalCount() {
-        int count = 0;
-        for (List<Animal> list: map.getAnimals().values())
-            count += list.size();
-        return count;
+        return map.getAlive().size();
     }
 
     public int grassCount() {
@@ -26,18 +21,27 @@ public class WorldStats {
     }
 
     public int emptyTiles() {
-        return settings.mapWidth()*settings.mapHeight()-map.getAnimals().size();
+        return settings.mapWidth()*settings.mapHeight()-animalCount();
     }
 
-    public int avgEnergy() {
-        return 0;
+    public double avgEnergy() {
+        double sum = 0;
+        for (Animal animal: map.getAlive())
+            sum += animal.getEnergy();
+        return animalCount()!=0 ? sum/animalCount() : 0;
     }
 
-    public int avgLifespan() {
-        return 0;
+    public double avgLifespan() {
+        double sum = 0;
+        for (Animal animal: map.getDead())
+            sum += animal.getLifespan();
+        return animalCount()!=0 ? sum/animalCount() : 0;
     }
 
-    public int avgChildCount() {
-        return 0;
+    public double avgChildCount() {
+        double sum = 0;
+        for (Animal animal: map.getAlive())
+            sum += animal.getChildren_count();
+        return animalCount()!=0 ? sum/animalCount() : 0;
     }
 }

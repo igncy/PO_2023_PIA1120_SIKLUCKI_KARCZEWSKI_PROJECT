@@ -8,10 +8,11 @@ import java.util.concurrent.ThreadLocalRandom;
 public class RandomGenerator {
     private final ArrayList<Vector2d> vectors = new ArrayList<>();
 
+    // lower incl, upper excl
     public Vector2d genVector(Vector2d lower, Vector2d upper) {
         return new Vector2d(
-                ThreadLocalRandom.current().nextInt(lower.getX(), upper.getX()+1),
-                ThreadLocalRandom.current().nextInt(lower.getY(), upper.getY()+1)
+                ThreadLocalRandom.current().nextInt(lower.getX(), upper.getX()),
+                ThreadLocalRandom.current().nextInt(lower.getY(), upper.getY())
         );
     }
 

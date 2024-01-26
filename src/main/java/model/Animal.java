@@ -2,6 +2,7 @@ package model;
 
 import util.WorldSettings;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Animal implements WorldElement {
@@ -14,7 +15,7 @@ public class Animal implements WorldElement {
     private int days_of_life;
     private Animal parent1;
     private Animal parent2;
-    private List<Animal> children;
+    private List<Animal> children = new ArrayList<>();
 
     private int grassEaten = 0;
     private int daysAlive = 0;
@@ -113,7 +114,9 @@ public class Animal implements WorldElement {
             case BACKWARD -> position = position.subtract(this.direction.toUnitVector());
         }
         int option = validator.canMoveTo(position);
-        int width = validator.getCurrentBonds().koniec().getX() - validator.getCurrentBonds().start().getX();
+        int width = settings.mapWidth();
+        System.out.println(">"+width+" "+option);
+        System.out.println(">>"+this.position+" "+position);
 
         if (option == 2) {
             this.position = position;
@@ -124,10 +127,10 @@ public class Animal implements WorldElement {
             }
         }
         else if(option == -1){
-            this.position = position.add(new Vector2d(width + 1, 0));
+            this.position = position.add(new Vector2d(width, 0));
         }
         else if(option == 1){
-            this.position = position.add(new Vector2d(-width - 1, 0));
+            this.position = position.add(new Vector2d(-width+1, 0));
         }
     }
 
@@ -177,5 +180,9 @@ public class Animal implements WorldElement {
 
     public int getID() {
         return ID;
+    }
+
+    public int getLifespan() {
+        return days_of_life;
     }
 }

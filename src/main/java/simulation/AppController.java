@@ -47,7 +47,7 @@ public class AppController {
     private int mutationType = 0;
     private int config = 0;
 
-    private final ExecutorService executorService = Executors.newFixedThreadPool(4);
+    private final ExecutorService executorService = Executors.newFixedThreadPool(5);
     private int simulationCount = 1;
     private final Gson gson = new Gson();
     private final String configPath = getClass().getClassLoader().getResource("config").getPath();
@@ -121,13 +121,10 @@ public class AppController {
         log(mutationSelect.getValue());
         log(configSelect.getValue());
         WorldSettings settings = loadConfig();
-
-        WorldMap map = new GrassField(10, settings);
-        SimulationController controller = new SimulationController(settings);
-        map.addObserver(controller);
-        controller.setWorldMap(map);
+        WorldMap map = new GrassField(simulationCount, settings);
         WorldStats stats = new WorldStats(map);
-        controller.setStats(stats);
+        SimulationController controller = new SimulationController(settings, map, stats);
+        map.addObserver(controller);
 
         Stage stage = new Stage();
         FXMLLoader loader = new FXMLLoader();
@@ -140,12 +137,18 @@ public class AppController {
         stage.setTitle("Simulation #" + simulationCount);
         stage.minWidthProperty().bind(viewRoot.minWidthProperty());
         stage.minHeightProperty().bind(viewRoot.minHeightProperty());
+        stage.setOnHiding(event -> closeSimulation(controller, simulationCount));
         stage.show();
 
-        Simulation simulation = new Simulation(map, settings);
+        Simulation simulation = new Simulation(map, settings, controller);
+        controller.setSimulation(simulation);
         executorService.submit(simulation);
         log("simulation #" + simulationCount++ + " started");
-        controller.drawMap("");
+    }
+
+    private void closeSimulation(SimulationController controller, int id) {
+        log("simulation #" + id + "closed");
+        controller.stop();
     }
 
     private WorldSettings getConfig() {
