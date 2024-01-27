@@ -59,7 +59,7 @@ public class Caracass extends AbstractWorldMap {
     {
         SecureRandom rand = new SecureRandom();
         int option = rand.nextInt(5);
-        if(option == 0){
+        if(option != 0){
             if(this.occupiedCaracass + n > this.Graveyard_list.size()){
                 generate_caracass(this.Graveyard_list.size() - this.occupiedCaracass);
             }
@@ -74,6 +74,7 @@ public class Caracass extends AbstractWorldMap {
 
     @Override
     public void sunrise(){
+        super.sunrise();
         create_flora(settings.grassCount());
     }
 

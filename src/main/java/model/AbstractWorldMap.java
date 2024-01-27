@@ -19,7 +19,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     protected final ArrayList<MapChangeListener> observers = new ArrayList<>();
     protected final HashMap<Vector2d, Animal> toRemove = new HashMap<>();
     protected final HashMap<Vector2d, Animal> toAdd = new HashMap<>();
-    protected List<Grass> Graveyard_list;
+    protected List<Grass> Graveyard_list = new ArrayList<>();
     protected TreeSet<Vector2d> Graveyard_set;
 
     public int counter = 0;

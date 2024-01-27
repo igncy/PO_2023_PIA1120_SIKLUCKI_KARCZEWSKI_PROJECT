@@ -125,12 +125,17 @@ public class AppController {
         }
     }
 
+    private WorldMap getMap(WorldSettings settings) {
+        return switch (grassSelect.getValue()) {
+            case "equatorial forests" -> new Globe(simulationCount, settings);
+            case "invigorating corpses" -> new Caracass(simulationCount, settings);
+            default -> new Globe(simulationCount, settings);
+        };
+    }
+
     public void runSimulation() throws IOException {
-//        log(grassSelect.getValue());
-//        log(mutationSelect.getValue());
-//        log(configSelect.getValue());
         WorldSettings settings = loadConfig();
-        WorldMap map = new GrassField(simulationCount, settings);
+        WorldMap map = getMap(settings);
         WorldStats stats = new WorldStats(map, csvSelect.isSelected());
         SimulationController controller = new SimulationController(settings, map, stats);
         map.addObserver(controller);
