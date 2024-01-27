@@ -3,6 +3,7 @@ package model;
 import util.MapChangeListener;
 import util.WorldSettings;
 
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -12,12 +13,14 @@ public abstract class AbstractWorldMap implements WorldMap {
     protected final HashMap<Vector2d, Grass> grass = new HashMap<>();
     protected final ArrayList<Animal> dead = new ArrayList<>();
     protected final ArrayList<Animal> animalsAlive = new ArrayList<>();
-
+    protected int total_area;
     private final int ID;
     protected final WorldSettings settings;
     protected final ArrayList<MapChangeListener> observers = new ArrayList<>();
     protected final HashMap<Vector2d, Animal> toRemove = new HashMap<>();
     protected final HashMap<Vector2d, Animal> toAdd = new HashMap<>();
+    protected List<Grass> Graveyard_list;
+    protected TreeSet<Vector2d> Graveyard_set;
 
     public int counter = 0;
 
@@ -28,6 +31,7 @@ public abstract class AbstractWorldMap implements WorldMap {
                 new Vector2d(0, 0),
                 new Vector2d(settings.mapWidth()-1, settings.mapHeight()-1)
         );
+        this.total_area = settings.mapHeight() * settings.mapWidth();
     }
 
     public int getID(){
@@ -45,20 +49,6 @@ public abstract class AbstractWorldMap implements WorldMap {
     public void place(Animal stwor) {
 
         Vector2d val = stwor.getPosition();
-
-        /* I wersja
-        if(animals.containsKey(val)){
-            List<Animal> lista = animals.get(val);
-            animals.remove(val);
-            lista.add(stwor);
-            animals.put(val, lista);
-        }
-        else{
-            List<Animal> nowa_lista = new ArrayList<>();
-            nowa_lista.add(stwor);
-            animals.put(val, nowa_lista);
-        }
-        */
 
         if(animals.containsKey(val)){
             ArrayList<Animal> lista = animals.get(val);
@@ -104,31 +94,55 @@ public abstract class AbstractWorldMap implements WorldMap {
         return childGenom;
     }
 
-    public void reproduce(Animal act, List<Animal> group){
-        if (group == null) return;
+    public void reproduce(Vector2d pos, List<Animal> group){
 
-        Vector2d pos = act.getPosition();
-
-        int min_energy = 5;
-        int lost_energy = 3;
-
-        for (int i = 0; i < group.size(); i++){
-            Animal temp = group.get(i);
-            MapDirection dir = Arrays.asList(MapDirection.values()).get(ThreadLocalRandom.current().nextInt(0, 8));
-
-            int[] child_genom = generate_genom(act, temp);
-
-            if(temp.getID() != act.getID() && temp.getEnergy() >= min_energy) {
-                Animal child = new Animal(pos, dir, act, temp, counter, child_genom, settings);
-                act.addChild(child);
-                temp.addChild(child);
-                temp.changeEnergy(temp.getEnergy() - lost_energy);
-                act.changeEnergy(temp.getEnergy() - lost_energy);
-                toAdd.put(pos, child);
-                // tutaj być moze trzeba sprawdzić czy po rozmnażaniu któryś z rodziców nie umrze
+        Animal test = group.get(0);
+        for(int i = 1; i < group.size(); i++)
+        {
+            Animal z1 = group.get(i);
+            if(z1.comp(test)){
+                test = z1;
             }
         }
+
+        if(test.getEnergy() < settings.animalEnergy()){
+            return;
+        }
+
+        Animal test1;
+        int ID_prev = test.getID();
+
+        if(group.get(0).getID() == ID_prev){ test1 = group.get(1); }
+        else { test1 = group.get(0); }
+
+        for (int i = 0; i < group.size(); i++)
+        {
+            Animal z1 = group.get(i);
+            if(z1.getID() != ID_prev && z1.comp(test1)){
+                test1 = z1;
+            }
+        }
+
+        if(test1.getEnergy() < settings.animalEnergy()){
+            return;
+        }
+
+        List<MapDirection> directions= List.of(MapDirection.NORTH, MapDirection.NORTHEAST, MapDirection.EAST, MapDirection.SOUTHEAST, MapDirection.SOUTH, MapDirection.SOUTHWEST, MapDirection.WEST, MapDirection.NORTHWEST);
+        SecureRandom rand1 = new SecureRandom();
+        MapDirection direction = directions.get(rand1.nextInt(8));
+        Animal par1 = test; Animal par2 = test1;
+
+        int[] child_genom = generate_genom(par1, par2);
+
+        Animal child = new Animal(pos, direction, par1, par2, counter(), child_genom);
+        child.changeEnergy(2 * settings.animalBreedingEnergy());
+
+        par1.addChild(child);
+        par2.addChild(child);
+        par1.changeEnergy(par1.getEnergy() - settings.animalBreedingEnergy());
+        par2.changeEnergy(par2.getEnergy() - settings.animalBreedingEnergy());
     }
+
 
     public void sunrise(){
 
@@ -150,7 +164,6 @@ public abstract class AbstractWorldMap implements WorldMap {
                     act.move(MoveDirection.RIGHT, this);
                 }
 
-                int prevX = act.getPosition().getX(); int prevY = act.getPosition().getY();
                 act.move(MoveDirection.FORWARD, this);
 
                 mapChanged();
@@ -158,9 +171,6 @@ public abstract class AbstractWorldMap implements WorldMap {
                     Thread.sleep(settings.sleepTime());
                 } catch (InterruptedException ignore) {}
 
-                if(act.getPosition().getX() != prevX || act.getPosition().getY() != prevY){
-                    reproduce(act, animals.get(act.getPosition()));
-                }
 
                 Vector2d newpos = act.getPosition();
                 act.changeEnergy(act.getEnergy() - settings.energyLoss());
@@ -173,13 +183,22 @@ public abstract class AbstractWorldMap implements WorldMap {
 
                 if(this.grass.containsKey(newpos)){
                     act.changeEnergy(act.getEnergy() + energyBoost);
-//                    Grass plant = this.grass.get(newpos);
-                    this.grass.remove(newpos); //te 2 linijki można zawrzeć w 1 linijce ale wyciągnięcie plant mogłoby się przydać
+                    Grass plant = grass.get(newpos);
+                    if(Graveyard_set.contains(newpos)){
+                        plant.setActive(true);
+                    }
+                    this.grass.remove(newpos);
                 }
                 else {
                     if(act.getEnergy() == 0){
                         act.setDead();
+                        Vector2d pos = act.getPosition();
                         this.dead.add(act);
+                        if(!this.Graveyard_set.contains(pos))
+                        {
+                            this.Graveyard_set.add(pos);
+                            this.Graveyard_list.add(new Grass(pos, true));
+                        }
                         toRemove.put(key, act);
                     }
                 }
@@ -190,21 +209,21 @@ public abstract class AbstractWorldMap implements WorldMap {
 
         }
 
+        for (Map.Entry<Vector2d, ArrayList<Animal>> entry: this.animals.entrySet()) {
+            ArrayList<Animal> group = entry.getValue();
+            Vector2d key = entry.getKey();
+            if(group.size() > 1)
+            {
+                reproduce(key, group);
+            }
+        }
+
+
+
+
+
     }
 
-    /*
-    public void move(Animal stwor, MoveDirection direction){
-        Vector2d prev = stwor.getPosition();
-        Animal animal_test = new Animal(prev, stwor.getOrient(), null ,null, -1);
-        animal_test.move(direction, this);
-        if (!canMoveTo(animal_test.getPosition())) {
-            return;
-        }
-        animals.remove(prev);
-        stwor.move(direction, this);
-        place(stwor);
-    }
-    */
 
     public List<Animal> objectAt(Vector2d position){
         if(isOccupied(position)){

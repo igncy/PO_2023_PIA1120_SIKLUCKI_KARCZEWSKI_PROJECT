@@ -2,6 +2,7 @@ package model;
 
 import util.WorldSettings;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -130,6 +131,25 @@ public class Animal implements WorldElement {
         else if(option == 1){
             this.position = position.add(new Vector2d(-width+1, 0));
         }
+    }
+
+    public boolean comp(Animal z2){
+        if(this.energy == z2.energy){
+
+            if(this.days_of_life == z2.days_of_life)
+            {
+                if(this.children_count == z2.children_count){
+
+                    SecureRandom rand = new SecureRandom();
+                    int option = rand.nextInt(2);
+
+                    return (option == 1);
+                }
+                else { return (this.children_count > this.children_count); }
+            }
+            else { return (this.days_of_life > z2.days_of_life); }
+        }
+        else{ return (this.energy > z2.energy); }
     }
 
     public int getDays_of_life() {

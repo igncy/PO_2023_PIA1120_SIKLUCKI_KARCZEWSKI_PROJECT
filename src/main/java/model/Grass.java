@@ -5,8 +5,9 @@ public class Grass implements WorldElement {
 
     private boolean active = true;
 
-    public Grass(Vector2d position) {
+    public Grass(Vector2d position, boolean active) {
         this.position = position;
+        this.active = active;
     }
 
     public Vector2d getPosition() {
