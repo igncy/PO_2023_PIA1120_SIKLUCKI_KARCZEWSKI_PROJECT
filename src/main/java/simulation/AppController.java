@@ -40,6 +40,7 @@ public class AppController {
     @FXML private ComboBox<String> grassSelect;
     @FXML private ComboBox<String> mutationSelect;
     @FXML private ComboBox<String> configSelect;
+    @FXML private CheckBox csvSelect;
 
     @FXML private ScrollPane logPane;
     @FXML private VBox logPaneBox;
@@ -121,12 +122,12 @@ public class AppController {
     }
 
     public void runSimulation() throws IOException {
-        log(grassSelect.getValue());
-        log(mutationSelect.getValue());
-        log(configSelect.getValue());
+//        log(grassSelect.getValue());
+//        log(mutationSelect.getValue());
+//        log(configSelect.getValue());
         WorldSettings settings = loadConfig();
         WorldMap map = new GrassField(simulationCount, settings);
-        WorldStats stats = new WorldStats(map);
+        WorldStats stats = new WorldStats(map, csvSelect.isSelected());
         SimulationController controller = new SimulationController(settings, map, stats);
         map.addObserver(controller);
 
@@ -144,15 +145,19 @@ public class AppController {
         stage.setOnHiding(event -> closeSimulation(controller, simulationCount));
         stage.show();
 
-        Simulation simulation = new Simulation(map, settings, controller);
+        Simulation simulation = new Simulation(map, settings, controller, stats);
         controller.setSimulation(simulation);
         executorService.submit(simulation);
         log("simulation #" + simulationCount++ + " started");
     }
 
     private void closeSimulation(SimulationController controller, int id) {
-        log("simulation #" + id + "closed");
+        log("simulation #" + id + " closed");
         controller.stop();
+    }
+
+    public void closeApp() {
+        executorService.shutdownNow();
     }
 
     private WorldSettings getConfig() {

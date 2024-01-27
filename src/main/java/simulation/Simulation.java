@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 import model.*;
 import util.RandomGenerator;
 import util.WorldSettings;
+import util.WorldStats;
 
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
@@ -12,8 +13,8 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Simulation implements Runnable {
     private final WorldMap map;
     private final WorldSettings settings;
+    private final WorldStats stats;
     private final RandomGenerator generator = new RandomGenerator();
-    public int day = 1;
     private final SimulationController controller;
     private boolean running = true;
 
@@ -24,10 +25,11 @@ public class Simulation implements Runnable {
         return genome;
     }
 
-    public Simulation(WorldMap map, WorldSettings settings, SimulationController controller) {
+    public Simulation(WorldMap map, WorldSettings settings, SimulationController controller, WorldStats stats) {
         this.map = map;
         this.settings = settings;
         this.controller = controller;
+        this.stats = stats;
 
         for (int i=0; i<settings.animalCount(); i++) {
             Animal animal = new Animal(generator.genVector(map.getCurrentBonds().start(), map.getCurrentBonds().koniec()),
@@ -44,10 +46,12 @@ public class Simulation implements Runnable {
     @Override
     public void run() {
         while (running) {
-            controller.setDay(day++);
+            controller.setDay(stats.getDay());
             map.removeQueued();
             map.addQueued();
             map.sunrise();
+            stats.save();
+            stats.nextDay();
         }
     }
 

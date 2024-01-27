@@ -155,6 +155,11 @@
             <TextField fx:id="sleepTimeField" maxWidth="50"/>
         </HBox>
 
+        <HBox alignment="CENTER">
+            <Label text="Save data to a CSV file "/>
+            <CheckBox fx:id="csvSelect"/>
+        </HBox>
+
 
         <Label/>
         <Button onAction="#runSimulation" text="Run simulation">
