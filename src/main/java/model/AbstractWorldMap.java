@@ -79,7 +79,7 @@ public abstract class AbstractWorldMap implements WorldMap {
 
         int E1 = par1.getEnergy(); int E2 = par2.getEnergy();
         float percent = (float) E1/(E1 + E2);
-        int x = (int) Math.floor(percent * (genomLen-1));
+        int x = (int) Math.floor(percent * (float)(genomLen-1));
         int sideChoice = ThreadLocalRandom.current().nextInt(1, 3);
         int p1 = 0; int k1 = 0; int p2 = 0; int k2 = 0;
 
