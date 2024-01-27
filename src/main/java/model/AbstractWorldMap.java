@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class AbstractWorldMap implements WorldMap {
-    private Boundary bonds;
+    protected Boundary bonds;
     protected final HashMap<Vector2d, ArrayList<Animal>> animals = new HashMap<>();
     protected final HashMap<Vector2d, Grass> grass = new HashMap<>();
     protected final ArrayList<Animal> dead = new ArrayList<>();
@@ -16,6 +16,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     protected int total_area;
     protected int GreenPlaces_occupied = 0;
     protected int occupiedCaracass = 0;
+    protected int occupiedDesert = 0;
     protected final int ID;
     protected final WorldSettings settings;
     protected final ArrayList<MapChangeListener> observers = new ArrayList<>();
@@ -23,6 +24,8 @@ public abstract class AbstractWorldMap implements WorldMap {
     protected final HashMap<Vector2d, Animal> toAdd = new HashMap<>();
     protected List<Grass> Graveyard_list;
     protected TreeSet<Vector2d> Graveyard_set;
+    protected boolean[][] vis_GreenPlaces;
+    protected Boundary equator;
 
     public int counter = 0;
 
@@ -34,6 +37,7 @@ public abstract class AbstractWorldMap implements WorldMap {
                 new Vector2d(settings.mapWidth()-1, settings.mapHeight()-1)
         );
         this.total_area = settings.mapHeight() * settings.mapWidth();
+        this.equator = bonds;
     }
 
     public int getID(){
@@ -46,6 +50,12 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     public WorldSettings getSettings() {
         return settings;
+    }
+
+    public boolean InEquator(Vector2d vec){
+        int x1 = this.equator.start().getX(); int x2 = this.equator.koniec().getX();
+        int y1 = this.equator.start().getY(); int y2 = this.equator.koniec().getY();
+        return (vec.getX() >= x1 && vec.getX() <= x2 && vec.getY() >= y1 && vec.getY() <= y2);
     }
 
     public void place(Animal stwor) {
@@ -69,7 +79,7 @@ public abstract class AbstractWorldMap implements WorldMap {
 
         int E1 = par1.getEnergy(); int E2 = par2.getEnergy();
         float percent = (float) E1/(E1 + E2);
-        int x = (int) Math.floor(percent * genomLen);
+        int x = (int) Math.floor(percent * (genomLen-1));
         int sideChoice = ThreadLocalRandom.current().nextInt(1, 3);
         int p1 = 0; int k1 = 0; int p2 = 0; int k2 = 0;
 
@@ -95,6 +105,8 @@ public abstract class AbstractWorldMap implements WorldMap {
 
         return childGenom;
     }
+
+
 
     public void reproduce(Vector2d pos, List<Animal> group){
 
@@ -132,12 +144,14 @@ public abstract class AbstractWorldMap implements WorldMap {
         List<MapDirection> directions= List.of(MapDirection.NORTH, MapDirection.NORTHEAST, MapDirection.EAST, MapDirection.SOUTHEAST, MapDirection.SOUTH, MapDirection.SOUTHWEST, MapDirection.WEST, MapDirection.NORTHWEST);
         SecureRandom rand1 = new SecureRandom();
         MapDirection direction = directions.get(rand1.nextInt(8));
+
         Animal par1 = test; Animal par2 = test1;
 
         int[] child_genom = generate_genom(par1, par2);
 
         Animal child = new Animal(pos, direction, par1, par2, counter(), child_genom);
         child.changeEnergy(2 * settings.animalBreedingEnergy());
+        place(child);
 
         par1.addChild(child);
         par2.addChild(child);
@@ -185,7 +199,13 @@ public abstract class AbstractWorldMap implements WorldMap {
                         this.occupiedCaracass -= 1;
                     }
                     else{
-                        GreenPlaces_occupied -= 1;
+                        this.vis_GreenPlaces[newpos.getY()][newpos.getX()] = false;
+                        if(InEquator(newpos)){
+                            this.GreenPlaces_occupied -= 1;
+                        }
+                        else{
+                            this.occupiedDesert -= 1;
+                        }
                     }
                     this.grass.remove(newpos);
                 }

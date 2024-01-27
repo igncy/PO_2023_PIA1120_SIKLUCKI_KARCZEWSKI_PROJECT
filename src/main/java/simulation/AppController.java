@@ -126,7 +126,7 @@ public class AppController {
 //        log(mutationSelect.getValue());
 //        log(configSelect.getValue());
         WorldSettings settings = loadConfig();
-        WorldMap map = new GrassField(simulationCount, settings);
+        WorldMap map = new Caracass(simulationCount, settings);
         WorldStats stats = new WorldStats(map, csvSelect.isSelected());
         SimulationController controller = new SimulationController(settings, map, stats);
         map.addObserver(controller);

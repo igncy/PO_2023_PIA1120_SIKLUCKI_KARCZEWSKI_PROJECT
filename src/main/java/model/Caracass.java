@@ -3,10 +3,6 @@ package model;
 import java.security.SecureRandom;
 import util.WorldSettings;
 
-
-
-
-
 public class Caracass extends AbstractWorldMap {
 
     private boolean[][] vis_GreenPlaces;
@@ -16,6 +12,7 @@ public class Caracass extends AbstractWorldMap {
         super(ID, settings);
         int W = settings.mapWidth(); int H = settings.mapHeight();
         vis_GreenPlaces = new boolean[H][W];
+        this.equator = this.bonds;
     }
 
     public void generate_caracass(int n){
