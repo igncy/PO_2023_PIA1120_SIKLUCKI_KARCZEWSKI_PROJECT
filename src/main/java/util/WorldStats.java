@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class WorldStats {
     private final WorldMap map;
@@ -17,7 +16,8 @@ public class WorldStats {
     private int day = 1;
     private boolean saveStats = false;
     FileWriter fileWriter = null;
-    private final HashMap<String, Integer> genomes = new HashMap<>();
+    private final ArrayList<Animal> genomeAnimals = new ArrayList<>();
+    private final HashMap<String, Integer> genomeCounts = new HashMap<>();
 
     public WorldStats(WorldMap map) {
         this.map = map;
@@ -108,18 +108,21 @@ public class WorldStats {
         return sb.toString();
     }
 
-    public String mostCommonGenome() {
-        String mostCommon = "null";
-        int mostCommonCount = -1;
+    private String mostCommon = "-";
+    private int mostCommonCount = 0;
 
+    public String mostCommonGenome() {
         ArrayList<Animal> animals = new ArrayList<>();
         animals.addAll(map.getAlive());
         animals.addAll(map.getDead());
 
         for (Animal animal: animals) {
+            if (genomeAnimals.contains(animal)) continue;
+
             String genome = genomeToString(animal.getGenom());
-            int count = genomes.getOrDefault(genome, 0)+1;
-            genomes.put(genome, count);
+            int count = genomeCounts.getOrDefault(genome, 0)+1;
+            genomeCounts.put(genome, count);
+            genomeAnimals.add(animal);
 
             if (count > mostCommonCount) {
                 mostCommon = genome;
@@ -131,6 +134,6 @@ public class WorldStats {
     }
 
     public int genomeCount(String genome) {
-        return genomes.getOrDefault(genome, 0);
+        return genomeCounts.getOrDefault(genome, 0);
     }
 }
