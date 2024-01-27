@@ -129,6 +129,7 @@ public class AppController {
         return switch (grassSelect.getValue()) {
             case "equatorial forests" -> new Globe(simulationCount, settings);
             case "invigorating corpses" -> new Caracass(simulationCount, settings);
+            case "grass" -> new GrassField(simulationCount, settings);
             default -> new Globe(simulationCount, settings);
         };
     }

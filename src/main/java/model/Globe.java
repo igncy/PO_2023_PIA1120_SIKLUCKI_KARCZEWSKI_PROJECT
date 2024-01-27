@@ -15,6 +15,7 @@ public class Globe extends AbstractWorldMap{
 
     public Globe(int ID, WorldSettings settings) {
         super(ID, settings);
+        calculate_equator();
     }
 
     public void calculate_equator(){
@@ -50,6 +51,11 @@ public class Globe extends AbstractWorldMap{
         }
     }
 
+    @Override
+    public void sunrise(){
+        super.sunrise();
+        generate_equator_plants(settings.grassCount());
+    }
 
 }
 

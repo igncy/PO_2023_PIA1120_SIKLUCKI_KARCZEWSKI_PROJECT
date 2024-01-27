@@ -22,7 +22,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     protected final HashMap<Vector2d, Animal> toRemove = new HashMap<>();
     protected final HashMap<Vector2d, Animal> toAdd = new HashMap<>();
     protected List<Grass> Graveyard_list = new ArrayList<>();
-    protected TreeSet<Vector2d> Graveyard_set;
+    protected TreeSet<Vector2d> Graveyard_set = new TreeSet<>();
 
     public int counter = 0;
 
@@ -107,7 +107,7 @@ public abstract class AbstractWorldMap implements WorldMap {
             }
         }
 
-        if(test.getEnergy() < settings.animalEnergy()){
+        if(test.getEnergy() < settings.animalSatiety()){
             return;
         }
 
@@ -125,7 +125,7 @@ public abstract class AbstractWorldMap implements WorldMap {
             }
         }
 
-        if(test1.getEnergy() < settings.animalEnergy()){
+        if(test1.getEnergy() < settings.animalSatiety()){
             return;
         }
 
@@ -136,13 +136,14 @@ public abstract class AbstractWorldMap implements WorldMap {
 
         int[] child_genom = generate_genom(par1, par2);
 
-        Animal child = new Animal(pos, direction, par1, par2, counter(), child_genom);
+        Animal child = new Animal(pos, direction, par1, par2, counter(), child_genom, settings);
         child.changeEnergy(2 * settings.animalBreedingEnergy());
 
         par1.addChild(child);
         par2.addChild(child);
         par1.changeEnergy(par1.getEnergy() - settings.animalBreedingEnergy());
         par2.changeEnergy(par2.getEnergy() - settings.animalBreedingEnergy());
+        toAdd.put(pos, child);
     }
 
 
@@ -301,8 +302,8 @@ public abstract class AbstractWorldMap implements WorldMap {
         toRemove.clear();
     }
     public void addQueued() {
-        for (Map.Entry<Vector2d, Animal> toRem: toAdd.entrySet()) {
-            place(toRem.getValue());
+        for (Map.Entry<Vector2d, Animal> entry: toAdd.entrySet()) {
+            place(entry.getValue());
         }
         toAdd.clear();
     }
