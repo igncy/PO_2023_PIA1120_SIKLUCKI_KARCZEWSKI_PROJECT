@@ -3,6 +3,7 @@ package model;
 import util.MapChangeListener;
 import util.WorldSettings;
 
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -104,31 +105,55 @@ public abstract class AbstractWorldMap implements WorldMap {
         return childGenom;
     }
 
-    public void reproduce(Animal act, List<Animal> group){
-        if (group == null) return;
+    public void reproduce(Vector2d pos, List<Animal> group){
 
-        Vector2d pos = act.getPosition();
-
-        int min_energy = 5;
-        int lost_energy = 3;
-
-        for (int i = 0; i < group.size(); i++){
-            Animal temp = group.get(i);
-            MapDirection dir = Arrays.asList(MapDirection.values()).get(ThreadLocalRandom.current().nextInt(0, 8));
-
-            int[] child_genom = generate_genom(act, temp);
-
-            if(temp.getID() != act.getID() && temp.getEnergy() >= min_energy) {
-                Animal child = new Animal(pos, dir, act, temp, counter, child_genom, settings);
-                act.addChild(child);
-                temp.addChild(child);
-                temp.changeEnergy(temp.getEnergy() - lost_energy);
-                act.changeEnergy(temp.getEnergy() - lost_energy);
-                toAdd.put(pos, child);
-                // tutaj być moze trzeba sprawdzić czy po rozmnażaniu któryś z rodziców nie umrze
+        Animal test = group.get(0);
+        for(int i = 1; i < group.size(); i++)
+        {
+            Animal z1 = group.get(i);
+            if(z1.comp(test)){
+                test = z1;
             }
         }
+
+        if(test.getEnergy() < settings.animalEnergy()){
+            return;
+        }
+
+        Animal test1;
+        int ID_prev = test.getID();
+
+        if(group.get(0).getID() == ID_prev){ test1 = group.get(1); }
+        else { test1 = group.get(0); }
+
+        for (int i = 0; i < group.size(); i++)
+        {
+            Animal z1 = group.get(i);
+            if(z1.getID() != ID_prev && z1.comp(test1)){
+                test1 = z1;
+            }
+        }
+
+        if(test1.getEnergy() < settings.animalEnergy()){
+            return;
+        }
+
+        List<MapDirection> directions= List.of(MapDirection.NORTH, MapDirection.NORTHEAST, MapDirection.EAST, MapDirection.SOUTHEAST, MapDirection.SOUTH, MapDirection.SOUTHWEST, MapDirection.WEST, MapDirection.NORTHWEST);
+        SecureRandom rand1 = new SecureRandom();
+        MapDirection direction = directions.get(rand1.nextInt(8));
+        Animal par1 = test; Animal par2 = test1;
+
+        int[] child_genom = generate_genom(par1, par2);
+
+        Animal child = new Animal(pos, direction, par1, par2, counter(), child_genom);
+        child.changeEnergy(2 * settings.animalBreedingEnergy());
+
+        par1.addChild(child);
+        par2.addChild(child);
+        par1.changeEnergy(par1.getEnergy() - settings.animalBreedingEnergy());
+        par2.changeEnergy(par2.getEnergy() - settings.animalBreedingEnergy());
     }
+
 
     public void sunrise(){
 
@@ -159,7 +184,7 @@ public abstract class AbstractWorldMap implements WorldMap {
                 } catch (InterruptedException ignore) {}
 
                 if(act.getPosition().getX() != prevX || act.getPosition().getY() != prevY){
-                    reproduce(act, animals.get(act.getPosition()));
+                    reproduce(act.getPosition(), animals.get(act.getPosition()));
                 }
 
                 Vector2d newpos = act.getPosition();
