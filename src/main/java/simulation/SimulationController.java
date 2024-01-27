@@ -99,6 +99,7 @@ public class SimulationController implements MapChangeListener {
 
     public void stop() {
         pause();
+        stats.closeFile();
     }
 
     public void click(MouseEvent event) {

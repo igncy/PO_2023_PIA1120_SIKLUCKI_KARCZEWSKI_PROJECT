@@ -16,6 +16,8 @@ public class App extends Application {
 
         configureStage(primaryStage, viewRoot);
         primaryStage.show();
+        AppController controller = loader.getController();
+        primaryStage.setOnHiding(event -> controller.closeApp());
     }
 
     private void configureStage(Stage primaryStage, BorderPane viewRoot) {
