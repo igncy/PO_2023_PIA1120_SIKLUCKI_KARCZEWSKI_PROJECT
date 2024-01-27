@@ -71,8 +71,8 @@ public class AppController {
 
     @FXML
     public void initialize() {
-        mapWidthInput = new InputField(mapWidthField, 30);
-        mapHeightInput = new InputField(mapHeightField, 30);
+        mapWidthInput = new InputField(mapWidthField, 20);
+        mapHeightInput = new InputField(mapHeightField, 20);
         grassCountInput = new InputField(grassCountField, 20);
         grassEnergyInput = new InputField(grassEnergyField, 10);
         grassGrowthInput = new InputField(grassGrowthField, 5);
