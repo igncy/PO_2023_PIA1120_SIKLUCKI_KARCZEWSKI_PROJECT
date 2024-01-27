@@ -1,1 +1,1 @@
-{"mapWidth":10,"mapHeight":10,"grassType":0,"grassCount":55,"grassEnergy":10,"grassGrowth":15,"animalCount":10,"animalEnergy":20,"animalSatiety":50,"animalBreedingEnergy":55,"mutationType":1,"mutationMin":0,"mutationMax":10,"genomeLength":5,"sleepTime":25}
+{"mapWidth":10,"mapHeight":10,"grassType":0,"grassCount":55,"grassEnergy":10,"grassGrowth":15,"energyLoss": 3,"animalCount":10,"animalEnergy":20,"animalSatiety":50,"animalBreedingEnergy":55,"mutationType":1,"mutationMin":0,"mutationMax":10,"genomeLength":5,"sleepTime":25}

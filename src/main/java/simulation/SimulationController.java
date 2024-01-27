@@ -67,7 +67,7 @@ public class SimulationController implements MapChangeListener {
         avgLifespanLabel.setText(String.format("%.1f days", stats.avgLifespan()));
         avgChildCountLabel.setText(String.format("%.1f", stats.avgChildCount()));
         String mcg = stats.mostCommonGenome();
-        mostCommonGenomeLabel.setText(String.format("'%s' (%d animals)", mcg, stats.genomeCount(mcg)));
+        mostCommonGenomeLabel.setText(String.format("'%s' (%d animal(s)", mcg, stats.genomeCount(mcg)));
     }
 
     private void clearGrid() {
@@ -77,7 +77,7 @@ public class SimulationController implements MapChangeListener {
     }
 
     public void setDay(int day) {
-        Platform.runLater(() -> infoLabel.setText("Day " + day));
+        Platform.runLater(() -> infoLabel.setText(String.format("%d", day)));
     }
 
     private void addCell(int x, int y, String stringValue, Color color, double opacity) {
@@ -101,20 +101,20 @@ public class SimulationController implements MapChangeListener {
     }
 
     public void stop() {
-        pause();
+        simulation.stop();
         stats.closeFile();
     }
 
     public void click(MouseEvent event) {
-        Node clickedNode = event.getPickResult().getIntersectedNode();
-        if (clickedNode != mapGrid) {
-            Node parent = clickedNode.getParent();
+        Node clicked = event.getPickResult().getIntersectedNode();
+        if (clicked != mapGrid) {
+            Node parent = clicked.getParent();
             while (parent != mapGrid) {
-                clickedNode = parent;
-                parent = clickedNode.getParent();
+                clicked = parent;
+                parent = clicked.getParent();
             }
-            Integer x = GridPane.getColumnIndex(clickedNode);
-            Integer y = GridPane.getRowIndex(clickedNode);
+            Integer x = GridPane.getColumnIndex(clicked);
+            Integer y = GridPane.getRowIndex(clicked);
             System.out.println(map.getAnimals().get(new Vector2d(x, y)));
         }
     }
