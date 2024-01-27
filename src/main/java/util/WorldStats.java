@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class WorldStats {
     private final WorldMap map;
@@ -14,6 +16,8 @@ public class WorldStats {
     private int day = 1;
     private boolean saveStats = false;
     FileWriter fileWriter = null;
+    private final ArrayList<Animal> genomeAnimals = new ArrayList<>();
+    private final HashMap<String, Integer> genomeCounts = new HashMap<>();
 
     public WorldStats(WorldMap map) {
         this.map = map;
@@ -73,7 +77,7 @@ public class WorldStats {
             File file = new File(filename);
             if (file.createNewFile()) {
                 fileWriter = new FileWriter(filename, true);
-                fileWriter.write("day,animalCount,grassCount,emptyTiles,avgEnergy,avgLifespan,avgChildCount\n");
+                fileWriter.write("day,animalCount,grassCount,emptyTiles,avgEnergy,avgLifespan,avgChildCount,mostCommonGenome,mostCommonGenomeCount\n");
             }
             else throw new IOException();
         } catch (IOException e) {
@@ -84,7 +88,8 @@ public class WorldStats {
     public void save() {
         if (!saveStats) return;
         try {
-            fileWriter.write(String.format("%d,%d,%d,%d,%.1f,%.1f,%.1f\n", day, animalCount(), grassCount(), emptyTiles(), avgEnergy(), avgLifespan(), avgChildCount()));
+            String mcg = mostCommonGenome();
+            fileWriter.write(String.format("%d,%d,%d,%d,%.1f,%.1f,%.1f,%s,%d\n", day, animalCount(), grassCount(), emptyTiles(), avgEnergy(), avgLifespan(), avgChildCount(), mcg, genomeCount(mcg)));
         } catch (IOException e) {
             saveStats = false;
         }
@@ -94,5 +99,41 @@ public class WorldStats {
         try {
             fileWriter.close();
         } catch (IOException | NullPointerException ignore) {}
+    }
+
+    private String genomeToString(int[] genome) {
+        StringBuilder sb = new StringBuilder();
+        for (int x: genome)
+            sb.append(x);
+        return sb.toString();
+    }
+
+    private String mostCommon = "-";
+    private int mostCommonCount = 0;
+
+    public String mostCommonGenome() {
+        ArrayList<Animal> animals = new ArrayList<>();
+        animals.addAll(map.getAlive());
+        animals.addAll(map.getDead());
+
+        for (Animal animal: animals) {
+            if (genomeAnimals.contains(animal)) continue;
+
+            String genome = genomeToString(animal.getGenom());
+            int count = genomeCounts.getOrDefault(genome, 0)+1;
+            genomeCounts.put(genome, count);
+            genomeAnimals.add(animal);
+
+            if (count > mostCommonCount) {
+                mostCommon = genome;
+                mostCommonCount = count;
+            }
+        }
+
+        return mostCommon;
+    }
+
+    public int genomeCount(String genome) {
+        return genomeCounts.getOrDefault(genome, 0);
     }
 }

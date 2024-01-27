@@ -24,6 +24,7 @@ public class SimulationController implements MapChangeListener {
     @FXML private Label avgEnergyLabel;
     @FXML private Label avgLifespanLabel;
     @FXML private Label avgChildCountLabel;
+    @FXML private Label mostCommonGenomeLabel;
     @FXML private Button pauseButton;
 
     private final WorldMap map;
@@ -65,6 +66,8 @@ public class SimulationController implements MapChangeListener {
         avgEnergyLabel.setText(String.format("%.1f", stats.avgEnergy()));
         avgLifespanLabel.setText(String.format("%.1f days", stats.avgLifespan()));
         avgChildCountLabel.setText(String.format("%.1f", stats.avgChildCount()));
+        String mcg = stats.mostCommonGenome();
+        mostCommonGenomeLabel.setText(String.format("'%s' (%d animals)", mcg, stats.genomeCount(mcg)));
     }
 
     private void clearGrid() {

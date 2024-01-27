@@ -55,6 +55,11 @@
             <Label fx:id="avgChildCountLabel"/>
         </HBox>
 
+        <HBox alignment="CENTER_LEFT">
+            <Label text="Most common genome: "/>
+            <Label fx:id="mostCommonGenomeLabel"/>
+        </HBox>
+
         <Label/>
         <Button fx:id="pauseButton" onAction="#pause" text="Pause">
             <cursor>
