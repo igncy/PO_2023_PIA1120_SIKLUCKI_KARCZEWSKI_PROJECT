@@ -43,7 +43,7 @@ public class Globe extends AbstractWorldMap{
                 if(!this.vis_equator[y1][x1]){
                     vis_equator[y1][x1] = true;
                     Vector2d cord = new Vector2d(x1 + xp, y1 + yp);
-                    this.grass.put(cord, new Grass(cord, false) );
+                    this.grass.put(cord, new Grass(cord, false) ); // Dla tej mapy true/false nie ma znaczenia
                     break;
                 }
             }

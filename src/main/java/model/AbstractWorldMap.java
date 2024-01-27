@@ -14,7 +14,9 @@ public abstract class AbstractWorldMap implements WorldMap {
     protected final ArrayList<Animal> dead = new ArrayList<>();
     protected final ArrayList<Animal> animalsAlive = new ArrayList<>();
     protected int total_area;
-    private final int ID;
+    protected int GreenPlaces_occupied = 0;
+    protected int occupiedCaracass = 0;
+    protected final int ID;
     protected final WorldSettings settings;
     protected final ArrayList<MapChangeListener> observers = new ArrayList<>();
     protected final HashMap<Vector2d, Animal> toRemove = new HashMap<>();
@@ -179,7 +181,11 @@ public abstract class AbstractWorldMap implements WorldMap {
                     act.changeEnergy(act.getEnergy() + energyBoost);
                     Grass plant = grass.get(newpos);
                     if(Graveyard_set.contains(newpos)){
-                        plant.setActive(true);
+                        plant.setActive(false);
+                        this.occupiedCaracass -= 1;
+                    }
+                    else{
+                        GreenPlaces_occupied -= 1;
                     }
                     this.grass.remove(newpos);
                 }
@@ -191,7 +197,7 @@ public abstract class AbstractWorldMap implements WorldMap {
                         if(!this.Graveyard_set.contains(pos))
                         {
                             this.Graveyard_set.add(pos);
-                            this.Graveyard_list.add(new Grass(pos, true));
+                            this.Graveyard_list.add(new Grass(pos, false));
                         }
                         toRemove.put(key, act);
                     }

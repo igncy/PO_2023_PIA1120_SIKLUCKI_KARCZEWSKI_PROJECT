@@ -2,15 +2,15 @@ package model;
 
 import java.security.SecureRandom;
 import util.WorldSettings;
-import java.security.SecureRandom;
+
 
 
 
 
 public class Caracass extends AbstractWorldMap {
-    private int occupiedCaracass = 0;
 
     private boolean[][] vis_GreenPlaces;
+
 
     public Caracass(int ID, WorldSettings settings) {
         super(ID, settings);
@@ -29,8 +29,8 @@ public class Caracass extends AbstractWorldMap {
                 int ind = rand.nextInt(interval);
                 Grass green = Graveyard_list.get(ind);
 
-                if(green.isActive() == true) {
-                    green.setActive(false);
+                if(green.isActive() == false) {
+                    green.setActive(true);
                     this.grass.put(green.getPosition(), green);
                     break;
                 }
@@ -40,6 +40,7 @@ public class Caracass extends AbstractWorldMap {
 
     public void generate_rest(int n)
     {
+        this.GreenPlaces_occupied += n;
         SecureRandom rand2 = new SecureRandom();
         for (int i = 0; i < n; i++){
             while(true) {
@@ -59,16 +60,19 @@ public class Caracass extends AbstractWorldMap {
     {
         SecureRandom rand = new SecureRandom();
         int option = rand.nextInt(5);
-        if(option == 0){
+        if(option != 0){
             if(this.occupiedCaracass + n > this.Graveyard_list.size()){
                 generate_caracass(this.Graveyard_list.size() - this.occupiedCaracass);
+                int res = this.total_area - this.GreenPlaces_occupied - this.Graveyard_list.size();
+                generate_rest(Math.min(occupiedCaracass + n - this.Graveyard_list.size(), res));
             }
             else{
                 generate_caracass(n);
             }
         }
         else{
-
+            int res = this.total_area - this.Graveyard_list.size() - this.GreenPlaces_occupied;
+            generate_rest(Math.min(n, res));
         }
     }
 
