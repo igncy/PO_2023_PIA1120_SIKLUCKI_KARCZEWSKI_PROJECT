@@ -17,6 +17,8 @@ public class Simulation implements Runnable {
     private final RandomGenerator generator = new RandomGenerator();
     private final SimulationController controller;
     private boolean running = true;
+    private boolean paused = false;
+    private Thread simulationThread;
 
     int[] genGenome(int length) {
         int[] genome = new int[length];
@@ -45,19 +47,33 @@ public class Simulation implements Runnable {
 
     @Override
     public void run() {
-        while (running) {
-            controller.setDay(stats.getDay());
-            map.removeQueued();
-            map.addQueued();
-            map.sunrise();
-            stats.save();
-            stats.nextDay();
-        }
+        simulationThread = new Thread(() -> {
+            while (running) {
+                if (!paused && !map.getAlive().isEmpty()) {
+                    controller.setDay(stats.getDay());
+                    map.removeQueued();
+                    map.addQueued();
+                    map.sunrise();
+                    stats.save();
+                    stats.nextDay();
+                }
+                else {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException ignore) {}
+                }
+            }
+        });
+        simulationThread.start();
     }
 
     public void pause(Button pauseButton) {
-        running = !running;
-        Platform.runLater(() -> pauseButton.setText(running? "Pause": "Resume"));
-        run();
+        paused = !paused;
+        Platform.runLater(() -> pauseButton.setText(paused? "Resume": "Pause"));
+    }
+
+    public void stop() {
+        running = false;
+        simulationThread.interrupt();
     }
 }

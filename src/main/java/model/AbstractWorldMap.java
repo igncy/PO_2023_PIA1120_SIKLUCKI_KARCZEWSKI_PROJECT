@@ -163,7 +163,13 @@ public abstract class AbstractWorldMap implements WorldMap {
                 }
 
                 Vector2d newpos = act.getPosition();
-                act.changeEnergy(act.getEnergy() - 1);
+                act.changeEnergy(act.getEnergy() - settings.energyLoss());
+                if(act.getEnergy() <= 0){
+                    act.setDead();
+                    this.dead.add(act);
+                    toRemove.put(key, act);
+                    return;
+                }
 
                 if(this.grass.containsKey(newpos)){
                     act.changeEnergy(act.getEnergy() + energyBoost);
@@ -264,7 +270,7 @@ public abstract class AbstractWorldMap implements WorldMap {
             Vector2d pos = toRem.getKey();
             Animal obj = toRem.getValue();
             animalsAlive.remove(obj);
-            if (animals.get(pos).size() > 1) animals.get(pos).remove(obj);
+            if (animals.get(pos)!=null && animals.get(pos).size() > 1) animals.get(pos).remove(obj);
             else animals.remove(pos);
         }
         toRemove.clear();

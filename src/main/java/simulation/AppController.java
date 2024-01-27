@@ -27,6 +27,7 @@ public class AppController {
     @FXML private TextField mapHeightField;
     @FXML private TextField grassCountField;
     @FXML private TextField grassEnergyField;
+    @FXML private TextField energyLossField;
     @FXML private TextField grassGrowthField;
     @FXML private TextField animalCountField;
     @FXML private TextField animalEnergyField;
@@ -59,6 +60,7 @@ public class AppController {
     private InputField mapHeightInput;
     private InputField grassCountInput;
     private InputField grassEnergyInput;
+    private InputField energyLossInput;
     private InputField grassGrowthInput;
     private InputField animalCountInput;
     private InputField animalEnergyInput;
@@ -75,11 +77,12 @@ public class AppController {
         mapHeightInput = new InputField(mapHeightField, 20);
         grassCountInput = new InputField(grassCountField, 20);
         grassEnergyInput = new InputField(grassEnergyField, 10);
+        energyLossInput = new InputField(energyLossField, 2);
         grassGrowthInput = new InputField(grassGrowthField, 5);
         animalCountInput = new InputField(animalCountField, 20);
-        animalEnergyInput = new InputField(animalEnergyField, 30);
+        animalEnergyInput = new InputField(animalEnergyField, 20);
         animalSatietyInput = new InputField(animalSatietyField, 50);
-        animalBreedingEnergyInput = new InputField(animalBreedingEnergyField, 50);
+        animalBreedingEnergyInput = new InputField(animalBreedingEnergyField, 30);
         mutationMinInput = new InputField(mutationMinField, 0);
         mutationMaxInput = new InputField(mutationMaxField, 10);
         genomeLengthInput = new InputField(genomeLengthField, 10);
@@ -89,6 +92,7 @@ public class AppController {
         inputFields.add(mapHeightInput);
         inputFields.add(grassCountInput);
         inputFields.add(grassEnergyInput);
+        inputFields.add(energyLossInput);
         inputFields.add(grassGrowthInput);
         inputFields.add(animalCountInput);
         inputFields.add(animalEnergyInput);
@@ -168,6 +172,7 @@ public class AppController {
                 grassCountInput.getValue(),
                 grassEnergyInput.getValue(),
                 grassGrowthInput.getValue(),
+                energyLossInput.getValue(),
                 animalCountInput.getValue(),
                 animalEnergyInput.getValue(),
                 animalSatietyInput.getValue(),
