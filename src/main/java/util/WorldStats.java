@@ -118,7 +118,6 @@ public class WorldStats {
 
         for (Animal animal: animals) {
             String genome = genomeToString(animal.getGenom());
-            System.out.println(genome);
             int count = genomes.getOrDefault(genome, 0)+1;
             genomes.put(genome, count);
 
