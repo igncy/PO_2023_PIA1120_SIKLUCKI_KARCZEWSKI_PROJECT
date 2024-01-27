@@ -2,12 +2,19 @@ package model;
 
 import java.util.Objects;
 
-public class Vector2d {
+public class Vector2d implements Comparable<Vector2d>{
     private final int x, y;
 
     public Vector2d(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    public int compareTo(Vector2d v1){
+        if(this.x == v1.x){
+            return this.y - v1.y;
+        }
+        return this.x - v1.x;
     }
     public int getX() {
         return x;
